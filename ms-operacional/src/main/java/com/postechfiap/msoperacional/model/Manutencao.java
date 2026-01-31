@@ -1,7 +1,6 @@
 package com.postechfiap.msoperacional.model;
 
-import com.postechfiap.msoperacional.enums.CausaManutencaoEnum;
-import com.postechfiap.msoperacional.enums.StatusManutencaoEnum; // Criaremos como ATIVA ou CONCLUIDA
+import com.postechfiap.msoperacional.enums.TipoManutencaoEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -25,10 +24,6 @@ public class Manutencao {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoManutencaoEnum tipo;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private CausaManutencaoEnum causa;
 
     @Column(nullable = false)
     private BigDecimal valor;
