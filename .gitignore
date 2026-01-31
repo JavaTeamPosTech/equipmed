@@ -1,0 +1,41 @@
+# Maven
+target/
+**/target/
+
+# Maven wrapper (opcional: se preferir versionar o jar, remova a linha abaixo)
+.mvn/wrapper/maven-wrapper.jar
+
+# Common Eclipse / STS
+.classpath
+.project
+.settings/
+.springBeans
+.apt_generated
+.factorypath
+.sts4-cache
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+dist/
+nbdist/
+/.nb-gradle/
+build/
+**/build/
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and runtime files
+*.log
+hs_err_pid*
