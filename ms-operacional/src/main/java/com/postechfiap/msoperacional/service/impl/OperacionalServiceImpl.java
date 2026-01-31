@@ -79,31 +79,35 @@ public class OperacionalServiceImpl implements OperacionalService {
     @Override
     @Transactional(readOnly = true)
     public Map<UUID, EquipamentoResumoDTO> buscarResumoParaTransparencia(List<UUID> equipamentoIds) {
-        log.info("Operacao=BatchSummary TotalSolicitado={}", equipamentoIds.size());
         Map<UUID, EquipamentoResumoDTO> resultado = new HashMap<>();
 
+        // Para teste, vamos pegar os últimos 10 anos para garantir que a massa de dados apareça
+        LocalDate periodoBusca = LocalDate.now().minusMonths(12);
+        LocalDateTime cincoDiasAtras = LocalDateTime.now().minusDays(5);
+
         for (UUID id : equipamentoIds) {
-            // Regra: Ociosidade se não houver uso nos últimos 5 dias
-            LocalDateTime cincoDiasAtras = LocalDateTime.now().minusDays(5);
+            // Usos
+            long totalUsos = usoRepository.countByEquipamentoId(id);
             List<Uso> usosRecentes = usoRepository.findByEquipamentoIdAndDataHoraAfter(id, cincoDiasAtras);
 
-            // Regra: Gastos dos últimos 12 meses
-            LocalDate umAnoAtras = LocalDate.now().minusMonths(12);
-            BigDecimal custoAnual = manutencaoRepository.somarGastosNoPeriodo(id, umAnoAtras);
-
-            long totalGeral = usoRepository.countByEquipamentoId(id);
             LocalDateTime dataUltimoUso = usosRecentes.stream()
                     .map(Uso::getDataHora)
                     .max(LocalDateTime::compareTo)
                     .orElse(null);
 
+            // Manutenções
+            BigDecimal custoTotal = manutencaoRepository.somarGastosNoPeriodo(id, periodoBusca);
+            long qtdManutencoes = manutencaoRepository.contarManutencoesNoPeriodo(id, periodoBusca);
+
+            log.debug("ID={} | Custo={} | Qtd={}", id, custoTotal, qtdManutencoes);
+
             resultado.put(id, new EquipamentoResumoDTO(
-                    totalGeral,
+                    totalUsos,
                     dataUltimoUso,
-                    custoAnual != null ? custoAnual : BigDecimal.ZERO,
-                    usosRecentes.size(),
-                    usosRecentes.isEmpty(), // isOciosa se a lista for vazia
-                    false // O MS-Transparência marcará true se custoAnual > 50% Aquisição
+                    custoTotal,
+                    (int) qtdManutencoes,
+                    usosRecentes.isEmpty(),
+                    false
             ));
         }
         return resultado;

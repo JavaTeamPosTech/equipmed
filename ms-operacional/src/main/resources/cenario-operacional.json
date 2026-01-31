@@ -1,0 +1,50 @@
+{
+  "procedimentos": [
+    { "codigo": "02.07.01.006-4", "nome": "RM de Crânio", "complexidade": "ALTA" },
+    { "codigo": "02.06.01.007-9", "nome": "TC de Crânio", "complexidade": "MEDIA" },
+    { "codigo": "02.08.09.001-0", "nome": "PET-CT Oncológico", "complexidade": "ALTA" },
+    { "codigo": "02.04.03.018-8", "nome": "Mamografia Digital", "complexidade": "MEDIA" },
+    { "codigo": "02.11.02.003-9", "nome": "Cateterismo Cardíaco", "complexidade": "ALTA" },
+    { "codigo": "02.05.01.004-0", "nome": "US Doppler Colorido", "complexidade": "MEDIA" },
+    { "codigo": "02.04.03.015-3", "nome": "RX de Tórax Digital", "complexidade": "BAIXA" },
+    { "codigo": "04.09.03.004-2", "nome": "Prostatectomia Robótica", "complexidade": "ALTA" },
+    { "codigo": "03.04.01.026-6", "nome": "Radioterapia", "complexidade": "ALTA" },
+    { "codigo": "04.08.05.011-4", "nome": "Cirurgia Ortopédica (Arco)", "complexidade": "MEDIA" },
+    { "codigo": "02.01.01.040-0", "nome": "Biópsia de Mama Guiada por US", "complexidade": "MEDIA" },
+    { "codigo": "02.04.01.017-9", "nome": "RX de Abdome Agudo", "complexidade": "BAIXA" },
+    { "codigo": "02.06.02.003-1", "nome": "TC de Tórax", "complexidade": "MEDIA" },
+    { "codigo": "02.07.02.002-7", "nome": "RM de Coluna Cervical", "complexidade": "ALTA" },
+    { "codigo": "02.08.01.002-5", "nome": "Cintilografia Óssea", "complexidade": "ALTA" },
+    { "codigo": "02.05.02.004-6", "nome": "Ecocardiograma Transtorácico", "complexidade": "MEDIA" },
+    { "codigo": "02.11.02.006-3", "nome": "Angioplastia Coronária", "complexidade": "ALTA" },
+    { "codigo": "04.06.01.041-5", "nome": "Lobectomia Pulmonar Robótica", "complexidade": "ALTA" },
+    { "codigo": "03.04.01.029-0", "nome": "Braquiterapia de Próstata", "complexidade": "ALTA" }
+  ],
+  "operadores": [
+    "DR_ALMEIDA_RAD", "DRA_BEATRIZ_RAD", "TEC_CARLOS_IMAGEM", "ENF_DANIELE_OBST",
+    "DR_EDUARDO_CARDIO", "DRA_FERNANDA_SONO", "TEC_GABRIEL_RX", "DR_HUGO_ONCO",
+    "DRA_IRIS_NUC", "FISICO_JORGE_RAD", "DR_KLEBER_UROL", "DRA_LARISSA_RAD"
+  ],
+  "empresasManutencao": [
+    { "nome": "Siemens Healthineers Brasil", "cnpj": "44.555.666/0001-33" },
+    { "nome": "GE Healthcare Systems", "cnpj": "22.333.444/0001-55" },
+    { "nome": "Philips Medical Capital", "cnpj": "33.444.555/0001-66" },
+    { "nome": "Samsung Medison Brasil", "cnpj": "12.345.678/0001-00" },
+    { "nome": "Fujifilm do Brasil Ltda", "cnpj": "98.765.432/0001-99" },
+    { "nome": "Canon Medical Systems", "cnpj": "11.222.333/0001-44" },
+    { "nome": "Varian Medical Systems", "cnpj": "55.444.333/0001-22" },
+    { "nome": "Intuitive Surgical Brasil", "cnpj": "66.777.888/0001-11" },
+    { "nome": "Nordeste Med Manutenção", "cnpj": "07.123.456/0001-00" },
+    { "nome": "Sudeste Hospitalar Tech", "cnpj": "08.888.999/0001-11" },
+    { "nome": "Rio Imagem Assistência", "cnpj": "09.111.222/0001-33" },
+    { "nome": "Paulista Med Services", "cnpj": "10.444.555/0001-77" }
+  ],
+  "motivosManutencao": [
+    "Troca de tubo de raios-x", "Calibração anual", "Reparo em sistema Chiller",
+    "Substituição de detectores", "Manutenção preventiva trimestral",
+    "Ajuste em braço robótico", "Limpeza de colimadores", "Troca de óleo dielétrico",
+    "Recarga de Hélio líquido", "Calibração de dosimetria", "Update de firmware",
+    "Reparo em mesa de exame", "Troca de baterias de UPS", "Ajuste de foco óptico",
+    "Substituição de transdutores", "Reparo em monitor médico", "Vazamento de contraste"
+  ]
+}
