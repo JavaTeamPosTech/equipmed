@@ -1,8 +1,6 @@
 package com.postechfiap.msoperacional.controller;
 
-import com.postechfiap.msoperacional.dto.EquipamentoResumoDTO;
-import com.postechfiap.msoperacional.dto.ManutencaoRequestDTO;
-import com.postechfiap.msoperacional.dto.ManutencaoResponseDTO;
+import com.postechfiap.msoperacional.dto.*;
 import com.postechfiap.msoperacional.service.OperacionalService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,19 +21,39 @@ public class OperacionalController {
 
     private final OperacionalService service;
 
+    // --- ENDPOINTS DE REGISTRO ---
+
+    @PostMapping("/usos")
+    public ResponseEntity<UsoResponseDTO> registrarUso(@RequestBody @Valid UsoRequestDTO dto) {
+        log.info("REST: Solicitação de registro de uso - Equipamento: {}", dto.equipamentoId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.registrarUso(dto));
+    }
+
     @PostMapping("/manutencoes")
     public ResponseEntity<ManutencaoResponseDTO> registrarManutencao(@RequestBody @Valid ManutencaoRequestDTO dto) {
-        log.info("Registrando manutenção para o equipamento: {}", dto.equipamentoId());
+        log.info("REST: Solicitação de registro de manutenção - Equipamento: {}", dto.equipamentoId());
         return ResponseEntity.status(HttpStatus.CREATED).body(service.registrarManutencao(dto));
     }
 
-    /**
-     * Endpoint especializado para o MS-Transparência.
-     * Recebe uma lista de IDs e retorna o status operacional de cada um.
-     */
+    // --- ENDPOINTS DE CONSULTA DE HISTÓRICO ---
+
+    @GetMapping("/usos/{equipamentoId}")
+    public ResponseEntity<List<UsoResponseDTO>> listarUsosPorEquipamento(@PathVariable UUID equipamentoId) {
+        log.info("REST: Consultando histórico de usos para equipamento: {}", equipamentoId);
+        return ResponseEntity.ok(service.listarUsosPorEquipamento(equipamentoId));
+    }
+
+    @GetMapping("/manutencoes/{equipamentoId}")
+    public ResponseEntity<List<ManutencaoResponseDTO>> listarManutencoesPorEquipamento(@PathVariable UUID equipamentoId) {
+        log.info("REST: Consultando histórico de manutenções para equipamento: {}", equipamentoId);
+        return ResponseEntity.ok(service.listarManutencoesPorEquipamento(equipamentoId));
+    }
+
+    // --- ENDPOINT DE INTEGRAÇÃO (MS-TRANSPARÊNCIA) ---
+
     @PostMapping("/batch-summary")
     public ResponseEntity<Map<UUID, EquipamentoResumoDTO>> buscarResumoEmLote(@RequestBody List<UUID> ids) {
-        log.info("Solicitado resumo operacional para {} equipamentos", ids.size());
+        log.info("REST: Gerando resumo operacional em lote para {} equipamentos", ids.size());
         return ResponseEntity.ok(service.buscarResumoParaTransparencia(ids));
     }
 }

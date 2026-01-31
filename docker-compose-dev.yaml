@@ -1,0 +1,36 @@
+services:
+
+  # REDIS OPERACIONAL
+  redis-operacional:
+    image: redis:7-alpine
+    container_name: redis-operacional
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    networks:
+      - equipmed_network
+
+  # POSTGRESQL DATABASE
+  equipmed_db:
+    image: postgres:16-alpine
+    container_name: equipmed_db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres_data/auth:/var/lib/postgresql/data
+      - ./data/postgres-init/:/docker-entrypoint-initdb.d
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d equipamentos_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - equipmed_network
+
+networks:
+  equipmed_network:
+    driver: bridge

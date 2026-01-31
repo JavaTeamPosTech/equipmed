@@ -40,23 +40,34 @@ services:
     networks:
       - equipmed_network
 
-#  # MS-OPERACIONAL
-#  ms-operacional:
-#    build:
-#      context: .
-#      dockerfile: ./ms-operacional/Dockerfile
-#    container_name: ms-operacional
-#    ports:
-#      - "8082:8082"
-#      - "5007:5005"
-#    environment:
-#      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
-#    depends_on:
-#      equipmed_db:
-#        condition: service_healthy
-#    restart: on-failure
-#    networks:
-#      - equipmed_network
+  # MS-OPERACIONAL
+  ms-operacional:
+    build:
+      context: .
+      dockerfile: ./ms-operacional/Dockerfile
+    container_name: ms-operacional
+    ports:
+      - "8082:8082"
+      - "5007:5005"
+    environment:
+      SPRING_PROFILES_ACTIVE: "prod"
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+    depends_on:
+      equipmed_db:
+        condition: service_healthy
+    restart: on-failure
+    networks:
+      - equipmed_network
+
+  # REDIS OPERACIONAL
+  redis-operacional:
+    image: redis:7-alpine
+    container_name: redis-operacional
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    networks:
+      - equipmed_network
 #
 #  # MS-TRANSPARENCIA
 #  ms-transparencia:

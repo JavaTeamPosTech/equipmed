@@ -5,6 +5,11 @@ spring:
   application:
     name: ms-operacional
 
+  data:
+    redis:
+      host: redis-operacional
+      port: 6379
+
   datasource:
     url: jdbc:postgresql://equipmed_db:5432/operacional_db
     username: user
@@ -22,3 +27,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+
+ms:
+  equipamentos:
+    url: "http://ms-equipamentos:8081/api/equipamentos"
