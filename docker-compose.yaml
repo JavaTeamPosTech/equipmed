@@ -10,6 +10,7 @@ services:
       - "8080:8080"
       - "5005:5005"
     environment:
+      SPRING_PROFILES_ACTIVE: "prod"
       JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     depends_on:
       equipmed_db:
@@ -28,6 +29,7 @@ services:
       - "8081:8081"
       - "5006:5005"
     environment:
+      SPRING_PROFILES_ACTIVE: "prod"
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
       JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
@@ -38,90 +40,90 @@ services:
     networks:
       - equipmed_network
 
-  # MS-OPERACIONAL
-  ms-operacional:
-    build:
-      context: .
-      dockerfile: ./ms-operacional/Dockerfile
-    container_name: ms-operacional
-    ports:
-      - "8082:8082"
-      - "5007:5005"
-    environment:
-      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
-    depends_on:
-      equipmed_db:
-        condition: service_healthy
-    restart: on-failure
-    networks:
-      - equipmed_network
-
-  # MS-TRANSPARENCIA
-  ms-transparencia:
-    build:
-      context: .
-      dockerfile: ./ms-transparencia/Dockerfile
-    container_name: ms-transparencia
-    ports:
-      - "8083:8083"
-      - "5008:5005"
-    environment:
-      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
-    depends_on:
-      equipmed_db:
-        condition: service_healthy
-    restart: on-failure
-    networks:
-      - equipmed_network
-
-  zookeeper:
-    image: zookeeper:3.8
-    container_name: zookeeper
-    environment:
-      ZOO_MY_ID: 1
-      ZOO_CLIENT_PORT: 2181
-      ZOO_TICK_TIME: 2000
-    networks:
-      - equipmed_network
-
-  kafka:
-    image: confluentinc/cp-kafka:7.6.0
-    container_name: kafka
-    depends_on:
-      zookeeper:
-        condition: service_started
-    ports:
-      - "9092:9092"
-      - "9093:9093"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:9093
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://localhost:9093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    networks:
-      - equipmed_network
-    healthcheck:
-      test: [ "CMD-SHELL", "kafka-broker-api-versions --bootstrap-server kafka:9092 || exit 1" ]
-      interval: 10s
-      timeout: 10s
-      retries: 20
-      start_period: 15s
-
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui
-    ports:
-      - "8085:8080"
-    depends_on:
-      - kafka
-    environment:
-      KAFKA_CLUSTERS_0_NAME: equipmed_network
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
-    networks:
-      - equipmed_network
+#  # MS-OPERACIONAL
+#  ms-operacional:
+#    build:
+#      context: .
+#      dockerfile: ./ms-operacional/Dockerfile
+#    container_name: ms-operacional
+#    ports:
+#      - "8082:8082"
+#      - "5007:5005"
+#    environment:
+#      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+#    depends_on:
+#      equipmed_db:
+#        condition: service_healthy
+#    restart: on-failure
+#    networks:
+#      - equipmed_network
+#
+#  # MS-TRANSPARENCIA
+#  ms-transparencia:
+#    build:
+#      context: .
+#      dockerfile: ./ms-transparencia/Dockerfile
+#    container_name: ms-transparencia
+#    ports:
+#      - "8083:8083"
+#      - "5008:5005"
+#    environment:
+#      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+#    depends_on:
+#      equipmed_db:
+#        condition: service_healthy
+#    restart: on-failure
+#    networks:
+#      - equipmed_network
+#
+#  zookeeper:
+#    image: zookeeper:3.8
+#    container_name: zookeeper
+#    environment:
+#      ZOO_MY_ID: 1
+#      ZOO_CLIENT_PORT: 2181
+#      ZOO_TICK_TIME: 2000
+#    networks:
+#      - equipmed_network
+#
+#  kafka:
+#    image: confluentinc/cp-kafka:7.6.0
+#    container_name: kafka
+#    depends_on:
+#      zookeeper:
+#        condition: service_started
+#    ports:
+#      - "9092:9092"
+#      - "9093:9093"
+#    environment:
+#      KAFKA_BROKER_ID: 1
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:9093
+#      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://localhost:9093
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+#      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+#    networks:
+#      - equipmed_network
+#    healthcheck:
+#      test: [ "CMD-SHELL", "kafka-broker-api-versions --bootstrap-server kafka:9092 || exit 1" ]
+#      interval: 10s
+#      timeout: 10s
+#      retries: 20
+#      start_period: 15s
+#
+#  kafka-ui:
+#    image: provectuslabs/kafka-ui:latest
+#    container_name: kafka-ui
+#    ports:
+#      - "8085:8080"
+#    depends_on:
+#      - kafka
+#    environment:
+#      KAFKA_CLUSTERS_0_NAME: equipmed_network
+#      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+#    networks:
+#      - equipmed_network
 
   # POSTGRESQL DATABASE
   equipmed_db:
