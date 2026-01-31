@@ -34,6 +34,7 @@
         <spring.kafka.version>3.0.10</spring.kafka.version>
         <springdoc.version>2.5.0</springdoc.version>
         <spring-cloud.starter-gateway.version>4.1.7</spring-cloud.starter-gateway.version>
+        <spring-redis.version>3.4.13</spring-redis.version>
     </properties>
 
 	<licenses>
@@ -117,6 +118,8 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-redis</artifactId>
+                <version>${spring-redis.version}</version>
+
             </dependency>
 
         </dependencies>
