@@ -1,225 +1,322 @@
 # EquipMed - Transparência e Eficiência na Gestão de Ativos de Alto Custo do SUS
 
-O **EquipMed** é um ecossistema de microserviços desenvolvido como projeto de Hackathon para a conclusão da **Pós-Graduação em Arquitetura e Desenvolvimento Java**. A solução visa preencher uma lacuna crítica na gestão da saúde pública brasileira: a governança sobre o ciclo de vida, a manutenção e a produtividade de equipamentos médicos de alto valor.
+O **EquipMed** é um ecossistema de microserviços de alta complexidade desenvolvido como projeto de Hackathon para a conclusão da **Pós-Graduação em Arquitetura e Desenvolvimento Java**. A solução visa preencher uma lacuna crítica na gestão da saúde pública brasileira: a governança sobre o ciclo de vida, a integridade financeira das manutenções e a produtividade real de equipamentos médicos de alto valor.
 
-## 1. O Problema e a Motivação
+---
 
-Atualmente, o Sistema Único de Saúde (SUS) gerencia um vasto parque tecnológico. No entanto, o acompanhamento desses ativos ocorre frequentemente em silos de dados isolados, focando apenas no cadastro burocrático ou na entrega da obra física, negligenciando a **operação contínua**.
+## 1. Visão do Produto e Motivação Estratégica
 
-### Desafios Identificados:
+Atualmente, o Sistema Único de Saúde (SUS) gerencia um dos maiores parques tecnológicos do mundo. No entanto, o acompanhamento desses ativos ocorre frequentemente em **silos de dados isolados**, focando apenas no cadastro burocrático ou na entrega da obra física, negligenciando a **operação contínua e a eficiência econômica**.
 
-* **"Caixa Preta" na Manutenção:** Dificuldade em identificar quando o custo acumulado de manutenção de um equipamento supera o seu valor de aquisição (ponto de substituição econômica).
-* **Equipamentos Ociosos:** Falta de visibilidade em tempo real sobre máquinas que estão cadastradas como "Ativas", mas não registram produtividade clínica real.
-* **Ineficiência Licitatória:** Ausência de dados consolidados sobre a confiabilidade de fabricantes e prestadores de serviço, dificultando a tomada de decisão em futuras compras.
-* **Desperdício de Recurso Público:** Verba destinada à saúde sendo drenada por contratos de manutenção desvantajosos ou equipamentos tecnicamente obsoletos.
+### 1.1. Os Desafios do Setor Público
 
-## 2. Entendendo o Ecossistema SUS (Domínio)
+* **"Caixa Preta" na Manutenção:** Ausência de alertas quando o custo acumulado de manutenção de um equipamento supera seu valor de aquisição (Ponto de Equilíbrio Econômico).
+* **Equipamentos "Fantasmas":** Máquinas cadastradas como "Ativas" no sistema nacional, mas que não registram produtividade clínica real por meses.
+* **Ineficiência na Tomada de Decisão:** Falta de dados consolidados sobre a confiabilidade de fabricantes para embasar processos licitatórios.
+* **Drenagem de Recursos:** Verbas destinadas à saúde sendo consumidas por contratos de manutenção desvantajosos em equipamentos tecnicamente obsoletos.
 
-Para um controle eficaz, o EquipMed integra e complementa os principais sistemas de dados da saúde pública brasileira:
+---
 
-* **SCNES (Cadastro Nacional de Estabelecimentos de Saúde):** Base oficial que registra onde os hospitais estão e quais recursos possuem. O EquipMed atua como a camada de monitoramento vivo sobre essa base estática.
-* **SISMOB (Sistema de Monitoramento de Obras):** Focado no investimento inicial e entrega. O EquipMed inicia sua gestão onde o SISMOB termina: no dia a dia da operação.
-* **SIGTAP (Tabela de Procedimentos, Medicamentos e OPM do SUS):** O "catálogo de serviços" do SUS. O EquipMed utiliza o SIGTAP como **validador de utilidade técnica**. Cada equipamento é vinculado a códigos específicos; se a máquina não gera registros SIGTAP, ela é sinalizada como ociosa.
+## 2. O Domínio SUS: Integração e Complementaridade
 
-## 3. A Solução: EquipMed
+Para garantir a eficácia da auditoria, o EquipMed foi desenhado para interagir (ou complementar) os pilares de dados da saúde pública:
 
-O projeto traz **Eficiência, Eficácia e Transparência** através de um monitoramento dinâmico baseado em três pilares estratégicos:
+* **SCNES (Cadastro Nacional de Estabelecimentos de Saúde):** O EquipMed atua como uma camada de monitoramento vivo sobre esta base, que hoje é meramente declaratória.
+* **SISMOB (Sistema de Monitoramento de Obras):** O acompanhamento do EquipMed inicia onde o SISMOB termina: no ciclo de vida operacional pós-instalação.
+* **SIGTAP (Tabela de Procedimentos do SUS):** O "Catálogo de Serviços" do SUS. O EquipMed utiliza o SIGTAP como **validador de produtividade**. Se um equipamento não gera registros SIGTAP compatíveis com sua natureza técnica, o sistema sinaliza ociosidade.
 
-* **Registro de Ativos:** Cadastro detalhado incluindo marca, modelo, valor de aquisição, fornecedor e localização geográfica precisa.
-* **Monitoramento Operacional (Uso e SIGTAP):** O uso do equipamento é validado por regras de domínio. O sistema impede, por exemplo, que um "Tomógrafo" registre um procedimento de "Radioterapia", garantindo a integridade da fiscalização.
-* **Gestão de Manutenções:** Histórico completo de intervenções (preventivas e corretivas), com cálculo automático do percentual de custo sobre o valor original do ativo.
-* **Dashboard de Transparência:** Interface pública com indicadores de disponibilidade, produtividade e alertas de custos excessivos, permitindo o controle social e auditoria governamental.
+---
 
-## 4. Matriz de Ativos e Escopo Inicial
+## 3. Escopo de Ativos e Inteligência de Domínio
 
-O EquipMed foca em equipamentos de alto custo, onde o impacto financeiro de má gestão é mais severo:
+O sistema foca em equipamentos de alta complexidade. Cada categoria possui uma **Matriz de Compatibilidade SIGTAP**, impedindo erros de lançamento ou fraudes.
 
-| Equipamento | Valor Médio | Finalidade Principal | Família de Procedimentos SIGTAP |
+| Categoria | Valor Médio | Finalidade Técnica | Família de Procedimentos SIGTAP |
 | --- | --- | --- | --- |
-| **Acelerador Linear** | R$ 4.500.000 | Tratamento Oncológico (Radioterapia) | **03.04.01.xxx** |
-| **PET-CT** | R$ 8.000.000 | Diagnóstico por Imagem Avançado | **02.08.08.xxx** |
-| **Ressonância Magnética** | R$ 3.500.000 | Diagnóstico por Imagem de Alta Definição | **02.08.09.xxx** |
-| **Tomógrafo Computadorizado** | R$ 1.200.000 | Diagnóstico por Imagem Seccional | **02.06.01.xxx** |
-| **Angiógrafo** | R$ 2.000.000 | Cardiologia Intervencionista | **02.11.02.xxx** |
-
-## 5. Diferenciais Técnicos e Governança
-
-* **Validação de Jurisdição via API Keys:** Cada Unidade de Saúde (Hospital/UBS) possui uma chave exclusiva. O **API Gateway** valida a chave e injeta a identidade da unidade, impedindo que dados de uma cidade sejam alterados por usuários de outra jurisdição.
-* **Identificação de Padrões para Auditoria:** Sinalização automática de equipamentos "críticos" (gasto em manutenção > 50% do valor de compra) ou "fantasmas" (sem produção registrada).
-* **Massa de Dados para IA:** A estrutura (Idade x Uso x Falha) cria o alicerce para **Manutenção Preditiva**, visando reduzir o tempo de máquina parada através de inteligência artificial.
-
-## 6. Visão de Futuro
-
-* **Integração Preditiva:** Antecipar quebras antes que ocorram com base no histórico de carga.
-* **Ranking de Confiabilidade de Fornecedores:** Score público para balizar novas licitações.
-* **Controle de Insumos:** Rastreabilidade de peças de alto valor trocadas durante o processo de manutenção.
-
-## 7. Arquitetura do Sistema
-
-O **EquipMed** adota uma arquitetura de microserviços descentralizada, priorizando a escalabilidade e o isolamento de domínios. A comunicação entre os serviços é realizada via **REST/HTTP** com o suporte de um **API Gateway** como ponto único de entrada.
-
-### 7.1. Componentes da Solução
-
-* **API Gateway (Central de Governança):**
-* **Papel:** Porta de entrada única (Porta 8080).
-* **Responsabilidade:** Implementa o filtro de segurança de **API Keys**, realiza o roteamento para os microserviços internos e enriquece os cabeçalhos (Headers) da requisição com dados de jurisdição (Unidade e Cidade).
-
-
-* **MS-Equipamentos (Gestão de Inventário):**
-* **Domínio:** Responsável pelo ciclo de vida do ativo (Cadastro, Marca, Modelo, Valor).
-* **Persistência:** PostgreSQL para dados relacionais e estruturados.
-* **Segurança:** Realiza o *double-check* dos headers de jurisdição injetados pelo Gateway.
-
-
-* **MS-Operacional (Gestão de Eventos):**
-* **Domínio:** Gerencia os eventos dinâmicos: Usos (vinculados ao SIGTAP) e Manutenções (Corretivas e Preventivas).
-* **Regra de Ouro:** Valida a compatibilidade técnica entre o código de procedimento SUS e o tipo de máquina.
-
-
-* **MS-Transparencia (Agregador de Inteligência):**
-* **Domínio:** Consome dados dos serviços de escrita para gerar indicadores consolidados.
-* **Performance:** Utiliza **Redis** para cache de indicadores de alto acesso (Sumários e Dashboards por cidade).
-* **Responsabilidade:** Expõe os dados para o Front-end de auditoria.
-
-
-
-### 7.2. Fluxo de Dados e Comunicação
-
-A integração entre os serviços para a geração do Dashboard ocorre de forma síncrona através de **OpenFeign (Feign Clients)**.
-
-1. O **MS-Transparencia** solicita a lista de equipamentos ao **MS-Equipamentos**.
-2. Para cada equipamento, ele consulta o **MS-Operacional** para totalizar custos de manutenção e volume de exames.
-3. Os dados são agregados por cidade e unidade de saúde para exibição no portal público.
+| **Acelerador Linear** | R$ 4.500.000 | Radioterapia Oncológica | **03.04.01.xxx** (Oncologia) |
+| **PET-CT** | R$ 8.000.000 | Medicina Nuclear Avançada | **02.08.08.xxx** (PET Scan) |
+| **Ressonância Magnética** | R$ 3.500.000 | Imagem de Alta Definição | **02.08.09.xxx** (RM) |
+| **Tomógrafo** | R$ 1.200.000 | Diagnóstico Seccional | **02.06.01.xxx** (TC) |
+| **Angiógrafo** | R$ 2.000.000 | Cardiologia Intervencionista | **02.11.02.xxx** (Hemodinâmica) |
 
 ---
 
-## 8. Stack Tecnológica
+## 4. Arquitetura Técnica Detalhada
 
-| Camada | Tecnologia | Justificativa Sênior |
+O ecossistema adota o padrão de **Microservices Architecture**, utilizando tecnologias de ponta do ecossistema Spring e Java 21.
+
+### 4.1. Componentes e Responsabilidades
+
+#### **A. API Gateway (The Guardian)**
+
+* **Tecnologia:** Spring Cloud Gateway.
+* **Função:** Ponto único de entrada (Porta 8080). Gerencia o roteamento e implementa o **Filtro de API Key**.
+* **Segurança:** Valida a `X-API-KEY` contra um registro interno de Unidades de Saúde e injeta Headers de jurisdição (`X-Unidade-Nome`, `X-Unidade-Cidade`) para os serviços internos.
+
+#### **B. MS-Equipamentos (Inventory Manager)**
+
+* **Responsabilidade:** Detentor da "verdade" sobre o ativo fixo.
+* **Endpoints de Destaque:**
+* `POST /api/equipamentos`: Cadastro com validação de jurisdição (Double-Check).
+* `PATCH /{id}/status`: Transição de estados operacionais.
+
+
+* **Persistência:** PostgreSQL 16.
+
+#### **C. MS-Operacional (Event Engine)**
+
+* **Responsabilidade:** Motor de alta transacionalidade para registros de **Uso** e **Manutenção**.
+* **Inteligência de Domínio:** Bloqueia registros de SIGTAP incompatíveis com o tipo de equipamento (Ex: impede Raio-X em Tomógrafo).
+* **Integração:** Fornece resumos em lote (Batch-Summary) para o agregador de transparência.
+
+#### **D. MS-Transparencia (Aggregator & BI)**
+
+* **Responsabilidade:** Consolidação de indicadores e exposição pública.
+* **Performance:** Implementa **Cache com Redis** para os endpoints de Dashboard, reduzindo o tráfego inter-serviços.
+* **Recurso de Auditoria:** Gera o **Dossiê de Auditoria** (Ficha completa com histórico e recomendação técnica).
+
+---
+
+## 5. Governança e Segurança Reativa
+
+Diferente de sistemas comuns de inventário, o EquipMed foi projetado com camadas de proteção de dados:
+
+* **Validação de Jurisdição:** O sistema garante que o Hospital A jamais consiga registrar usos para o Hospital B, mesmo que conheça o ID do equipamento, pois a `X-API-KEY` atrela a requisição a uma jurisdição fixa via Gateway.
+* **Tratamento de Exceções Global:** Implementação de `ControllerAdvice` para converter erros internos em respostas de negócio claras (Status 400/403), facilitando o debug e a auditoria.
+
+---
+
+## 6. Stack Tecnológica
+
+* **Java 21:** Uso intensivo de **Records** para imutabilidade de DTOs e **Virtual Threads** para escalabilidade.
+* **Spring Boot 3.3.x:** Base de todos os microserviços.
+* **Redis:** Utilizado como camada de cache para o portal público de transparência.
+* **PostgreSQL:** Persistência relacional com forte integridade referencial.
+* **OpenFeign:** Comunicação declarativa entre os serviços internos.
+* **Docker & Docker Compose:** Orquestração completa do ambiente com 7 containers.
+
+---
+
+## 7. Data Seeding e Automação de Massa (Super Massa)
+
+O sistema implementa uma estratégia de **Carga Dinâmica via CommandLineRunner**. Ao subir o ambiente, o sistema:
+
+1. Lê arquivos JSON com modelos reais de equipamentos e códigos SIGTAP.
+2. Gera dados para os polos de **Recife, Rio de Janeiro e São Paulo**.
+3. Calcula datas retroativas de aquisição para simular equipamentos de diferentes idades.
+4. Injeta **manutenções críticas propositais** (ex: R$ 2.2M em Olinda) para que o avaliador veja os alertas de auditoria funcionando imediatamente no Dashboard.
+
+---
+
+## 8. Infraestrutura (Docker Compose)
+
+O arquivo `docker-compose.yml` orquestra:
+
+* **4 Microserviços Java** (Gateway, Equipamentos, Operacional, Transparência).
+* **2 Databases** (PostgreSQL e Redis).
+* **1 Frontend (Nginx)**: Servindo o Dashboard de Auditoria.
+* **Rede Isolada:** `equipmed_network` para comunicação interna segura.
+
+### Como Rodar:
+
+```bash
+# Na raiz do projeto
+docker compose up --build -d
+
+```
+
+Acesse: `http://localhost` (Dashboard) ou `http://localhost:8080` (Gateway).
+
+---
+
+## 9. Visão de Futuro: IA e Preditividade
+
+A "Super Massa" de dados gerada pelo EquipMed (Idade x Frequência de Uso x Custo de Falha) é o alicerce para:
+
+* **Manutenção Preditiva:** Antecipar falhas críticas baseado em padrões de uso intenso.
+* **Ranking de Confiabilidade:** Score público para fabricantes que exigem menos manutenções corretivas.
+
+---
+Entendido. Vamos elevar o **EquipMed** ao nível de documentação técnica de uma plataforma *Enterprise*. Um README desse porte não apenas lista os nomes, mas detalha os **contratos**, as **regras de validação** e o **esquema de dados**.
+
+Aqui está o **Dossiê Técnico de Engenharia (README Parte 2 - O Mergulho Profundo)**:
+
+---
+
+## 7. Detalhamento de Domínio e Entidades (ERD)
+
+A modelagem de dados foi desenhada para garantir a rastreabilidade total do ativo. Cada microserviço gerencia seu próprio esquema (Database per Service), garantindo o desacoplamento.
+
+### 7.1. MS-Equipamentos (Persistência: PostgreSQL)
+
+* **Equipamento (`equipamentos`):**
+    * `id` (UUID, PK): Identificador único global.
+    * `tagPatrimonio` (String, Unique): Código de inventário SUS.
+    * `tipo` (Enum): Categoria (TOMOGRAFO, ACELERADOR_LINEAR, etc).
+    * `marca` (String): Fabricante do equipamento.
+    * `modelo` (String): Modelo específico do equipamento.
+    * `valorAquisicao` (BigDecimal): Custo de compra para cálculo de ROI.
+    * `dataAquisicao` (LocalDate): Data para cálculo de depreciação e idade.
+    * `unidadeDeSaude` (String): Nome da unidade detentora (Validado via API KEY).
+    * `cidade`/`estado` (String): Localização geográfica para agrupamento.
+    * `fornecedor` (String): Empresa fornecedora do equipamento.
+    * `status` (Enum): ATIVO, MANUTENCAO, OBSOLETO.
+
+### 7.2. MS-Operacional (Persistência: PostgreSQL)
+
+* **Uso (`usos`):**
+    * `id` (UUID, PK): Identificador único do registro de uso.
+    * `equipamentoId` (UUID, FK): Vínculo com o inventário.
+    * `codigoSigtap` (String): Código do procedimento (Ex: 02.04.03.001-8).
+    * `procedimentoNome` (String): Descrição do procedimento derivada do código SIGTAP.
+    * `dataHora` (LocalDateTime): Timestamp do uso.
+    * `operadorId` (String): Identificador do operador responsável.
+
+* **Manutencao (`manutencoes`):**
+    * `id` (UUID, PK): Identificador único da manutenção.
+    * `equipamentoId` (UUID, FK): Vínculo com o inventário.
+    * `tipo` (Enum): PREVENTIVA ou CORRETIVA.
+    * `valor` (BigDecimal): Custo da intervenção.
+    * `dataInicio` (LocalDate): Data de início da manutenção.
+    * `dataFim` (LocalDate, nullable): Data de conclusão (null = em andamento).
+    * `cnpjEmpresa` (String): CNPJ da empresa prestadora.
+    * `nomeEmpresa` (String): Nome da empresa prestadora.
+    * `descricao` (String): Descrição do serviço realizado.
+
+## 8. Catálogo de Endpoints e Contratos (API Spec)
+
+O sistema utiliza o **API Gateway (Porta 8080)** como orquestrador. Abaixo os contratos detalhados:
+
+### 8.1. Gestão de Inventário (MS-Equipamentos)
+
+### 8.1. Gestão de Inventário (MS-Equipamentos)
+
+| Método | Endpoint | Payload / Header | Regra de Negócio |
+| --- | --- | --- | --- |
+| **POST** | `/api/equipamentos` | `X-API-KEY` + JSON | Valida se a cidade/unidade no JSON coincide com o dono da Key. |
+| **GET** | `/api/equipamentos` | QueryParams: `cidade`, `estado`, `tipo`, `unidadeDeSaude`, `status`, `page`, `size`, `sort` | Listagem paginada com filtros dinâmicos. Suporta ordenação customizada. |
+| **GET** | `/api/equipamentos/{id}` | PathVariable: `id` (UUID) | Retorna os detalhes de um equipamento específico. |
+| **GET** | `/api/equipamentos/patrimonio/{tag}` | PathVariable: `tag` (String) | Busca equipamento pelo código de patrimônio SUS. |
+| **PATCH** | `/api/equipamentos/{id}/status` | `{ "status": "OBSOLETO" }` | Altera o status operacional do equipamento. |
+| **PATCH** | `/api/equipamentos/{id}/localizacao` | `{ "cidade": "...", "estado": "..." }` | Atualiza a localização geográfica do ativo. |
+
+### 8.2. Ciclo de Vida Operacional (MS-Operacional)
+
+| Método | Endpoint | Descrição |
 | --- | --- | --- |
-| **Linguagem** | Java 21 | Uso de Virtual Threads (Loom) e Records para DTOs. |
-| **Framework** | Spring Boot 3.3+ | Ecossistema maduro para Cloud Native. |
-| **Gateway** | Spring Cloud Gateway | Filtros reativos para alta performance em segurança. |
-| **Persistência** | PostgreSQL 16 | Garantia de integridade referencial e transacional. |
-| **Cache** | Redis | Redução de latência em endpoints de transparência pública. |
-| **Client** | OpenFeign | Abstração elegante para comunicação inter-serviços. |
-| **Conteinerização** | Docker & Docker Compose | Padronização de ambiente e orquestração simplificada. |
+| **POST** | `/api/operacional/usos` | Registra uso de equipamento com validação SIGTAP. |
+| **POST** | `/api/operacional/manutencoes` | Registra manutenção com custo. |
+| **GET** | `/api/operacional/usos/{equipamentoId}` | Lista histórico de usos por equipamento. |
+| **GET** | `/api/operacional/manutencoes/{equipamentoId}` | Lista histórico de manutenções por equipamento. |
+| **POST** | `/api/operacional/batch-summary` | Retorna resumo operacional em lote (integração MS-Transparência). |
+
+### 8.3. Painel de Transparência (MS-Transparencia)
+
+*Todos os endpoints de transparência utilizam cache **Redis** com TTL de 10 minutos.*
+
+| Método | Endpoint | Retorno | Objetivo |
+| --- | --- | --- | --- |
+| **GET** | `/api/transparencia/sumario` | `PainelResumoDTO` | Visão macro: % Disponibilidade, Investimento Total e Máquinas Paradas. |
+| **GET** | `/api/transparencia/alertas` | `List<EquipamentoDTO>` | Retorna apenas ativos com "Custo de Manutenção > 50% do Valor de Compra". |
+| **GET** | `/api/transparencia/auditoria/{tag}` | `FichaAuditoriaDTO` | **Dossiê Técnico:** Consolida Uso + Gasto + Recomendação (Manter ou Trocar). |
 
 ---
 
-## 9. Modelagem de Dados (Entidades Principais)
+## 9. Arquitetura de Integração (Inter-service Communication)
 
-Para manter a clareza para os avaliadores, as entidades foram modeladas focando no **valor de auditoria**:
+O projeto evita o acoplamento forte através de padrões de resiliência:
 
-* **Equipamento:** `ID`, `TagPatrimonio`, `Tipo`, `ValorAquisicao`, `DataAquisicao`, `UnidadeSaude`, `Cidade`.
-* **Uso:** `ID`, `EquipamentoID`, `CodigoSigtap`, `DataUso`, `OperadorID`.
-* **Manutencao:** `ID`, `EquipamentoID`, `Tipo (Preventiva/Corretiva)`, `Valor`, `EmpresaPrestadora`.
-
----
-
-## 10. Detalhamento dos Microserviços e Endpoints
-
-Abaixo, detalhamos as responsabilidades de cada serviço e os contratos de API disponíveis. Todas as requisições de escrita (POST/PATCH) para os serviços operacionais e de equipamentos exigem o Header `X-API-KEY`.
-
-### 10.1. MS-Equipamentos (Gestão de Inventário)
-
-Este serviço é o detentor da "verdade" sobre o ativo físico. Ele gerencia o cadastro e a localização dos equipamentos de alto valor.
-
-* **Responsabilidade:** Cadastro, filtragem e atualização de status de patrimônio.
-* **Segurança:** Implementa o *Double-Check* de jurisdição comparando o JSON com os Headers `X-Unidade-Nome` e `X-Unidade-Cidade`.
-
-| Verbo | Endpoint | Descrição |
-| --- | --- | --- |
-| **POST** | `/api/equipamentos` | Cadastra um novo equipamento (Requer Header de API Key). |
-| **GET** | `/api/equipamentos/{id}` | Busca detalhes técnicos de um equipamento específico via UUID. |
-| **GET** | `/api/equipamentos` | Lista equipamentos com suporte a paginação e filtros (Cidade, Unidade, Status, Tipo). |
-| **PATCH** | `/api/equipamentos/{id}/status` | Atualiza o estado operacional (ATIVO, MANUTENCAO, OBSOLETO). |
-| **PATCH** | `/api/equipamentos/{id}/localizacao` | Registra a transferência de um equipamento entre cidades ou estados. |
+1. **OpenFeign:** O `ms-transparencia` atua como um agregador. Ele não possui os dados, ele os solicita em tempo real.
+2. **DTOs de Integração:** O `ms-operacional` fornece o endpoint `/batch-summary`, que permite ao agregador buscar dados de múltiplos equipamentos em uma única chamada de rede, evitando o problema de *N+1 queries* no microserviço.
+3. **Circuit Breaker (Conceitual):** Caso o `ms-operacional` esteja fora, o `ms-transparencia` serve os dados de inventário com os indicadores operacionais zerados, mantendo a disponibilidade parcial do portal (Graceful Degradation).
 
 ---
 
-### 10.2. MS-Operacional (Gestão de Eventos e SIGTAP)
+## 10. Lógica de Autopopulação (A "Super Massa")
 
-O motor dinâmico do sistema. Ele registra o que acontece com o equipamento durante sua vida útil.
+A automação de dados foi construída para simular 2 anos de operação em segundos:
 
-* **Responsabilidade:** Registro de produtividade clínica e custos de manutenção.
-* **Regra de Negócio:** Valida a compatibilidade do código SIGTAP com o tipo de equipamento no ato do registro de uso.
-
-| Verbo | Endpoint | Descrição |
-| --- | --- | --- |
-| **POST** | `/api/operacional/usos` | Registra um atendimento vinculado a um código SIGTAP. |
-| **POST** | `/api/operacional/manutencoes` | Registra intervenção técnica (Corretiva/Preventiva) e seu respectivo custo. |
-| **GET** | `/api/operacional/usos/{id}` | Histórico completo de exames realizados por um equipamento. |
-| **GET** | `/api/operacional/manutencoes/{id}` | Histórico de gastos e intervenções de uma máquina específica. |
-| **POST** | `/api/operacional/batch-summary` | **Internal:** Endpoint otimizado para o MS-Transparência consolidar dados de múltiplos IDs. |
+1. **Carga de Equipamentos:** Criação de 15 ativos de alto custo (Aceleradores, Tomógrafos, PET-CT) em Olinda, Recife e Rio de Janeiro.
+2. **Carga de Produtividade:** Geração de ~1.000 registros de uso usando códigos SIGTAP reais (`03.04.01.026-6`, `02.08.09.001-0`).
+3. **Injeção de Alertas:**
+* **Cenário A:** Equipamento com 0 usos nos últimos 30 dias (Gera alerta de **OCIOSIDADE**).
+* **Cenário B:** Manutenção de R$ 2.500.000 em um acelerador de R$ 4.500.000 (Gera status **CRÍTICO / REVISAR CONTRATO**).
 
 ---
 
-### 10.3. MS-Transparencia (Portal de Auditoria)
+## 11. Segurança e Filtros do Gateway
 
-O serviço de leitura e agregação. Ele não possui banco de dados de escrita próprio (PostgreSQL), utilizando **Redis** para cachear visões consolidadas.
+O **API Gateway** não é apenas um proxy, ele é uma camada de inteligência:
 
-* **Responsabilidade:** Cruzar dados de Inventário + Operacional para gerar insights de fiscalização.
-* **Consumo:** Utiliza OpenFeign para buscar dados dos outros microserviços em tempo real.
-
-| Verbo | Endpoint | Descrição |
-| --- | --- | --- |
-| **GET** | `/api/transparencia/sumario` | Retorna o "Painel Executivo" (Total investido, Disponibilidade Geral, Ociosidade). |
-| **GET** | `/api/transparencia/cidades` | Consolida indicadores agrupados por município (Foco em Gestão Municipal). |
-| **GET** | `/api/transparencia/unidades` | Lista a performance individual de cada hospital ou UBS (Paginado no Frontend). |
-| **GET** | `/api/transparencia/alertas` | Filtra apenas equipamentos que exigem atenção imediata (Custo > 50% ou Ociosos). |
-| **GET** | `/api/transparencia/auditoria/{tag}` | Gera o **Dossiê Completo** de um patrimônio para fins de fiscalização. |
-| **GET** | `/api/transparencia/painel-geral` | Listagem bruta de todos os ativos enriquecidos com dados operacionais. |
+* **Filtro Global de API Key:** Intercepta todas as rotas `/api/equipamentos/**` e `/api/operacional/**`.
+* **Enriquecimento de Contexto:** Busca a chave no `api-keys.json` e injeta os headers `X-Unidade-Nome` e `X-Unidade-Cidade`. Isso permite que os microserviços de backend sejam **stateless** e ignorantes quanto à forma de autenticação, focando apenas na validação da informação recebida no header.
 
 ---
 
-### 10.4. API Gateway (Roteamento e Segurança)
+## 12. Interface de Transparência (Frontend)
 
-O ponto de entrada (Porta `8080`) que orquestra as chamadas para os serviços internos.
+O Frontend do **EquipMed** foi concebido como uma SPA (Single Page Application) de alta performance, utilizando **Tailwind CSS** para uma interface responsiva e **Vanilla JavaScript** para garantir um consumo leve e direto das APIs, sem sobrecarga de frameworks.
 
-* **Funcionalidade:** Load Balancing e Filtro de API Key.
-* **Mapeamento de Rotas:**
-* `/api/equipamentos/**` → MS-Equipamentos
-* `/api/operacional/**` → MS-Operacional
-* `/api/transparencia/**` → MS-Transparencia
+### 12.1. Camada de Integração e Consumo
+
+A interface comunica-se exclusivamente com o **API Gateway (Porta 8080)**. Embora os dados venham de microserviços distintos, o Frontend consome a agregação de inteligência do **MS-Transparencia**.
+
+### 12.2. Seções do Portal e Vínculos de API
+
+#### **A. Painel Executivo (Sumário)**
+
+Localizado no topo da página, fornece os KPIs (Key Performance Indicators) globais do SUS para uma visão de nível ministerial.
+
+* **Endpoint:** `GET /api/transparencia/sumario`
+* **Dados Vinculados:** * `% Disponibilidade Geral`: Cálculo em tempo real do tempo de uptime das máquinas.
+* `Investimento Total`: Soma histórica de manutenções registradas no `ms-operacional`.
+
+
+
+#### **B. Gestão Municipal Detalhada**
+
+Apresenta cards dinâmicos para cada cidade monitorada (**Recife, Olinda e Rio de Janeiro**).
+
+* **Endpoint:** `GET /api/transparencia/cidades`
+* **Inteligência Visual:** O sistema altera a cor dos badges e barras de progresso baseando-se no índice de produtividade e alertas críticos de cada município.
+
+#### **C. Performance por Unidade de Saúde (Grid Paginado)**
+
+Uma tabela técnica que cruza os dados de inventário com a produtividade operacional.
+
+* **Endpoint:** `GET /api/transparencia/unidades`
+* **Data-Binding:** * **Exames:** Quantidade de registros SIGTAP processados pelo `ms-operacional`.
+* **Alertas:** Contador de inconsistências financeiras detectadas pelo motor de auditoria.
+
+
+
+#### **D. Prioridades de Inspeção (Alertas Críticos)**
+
+Tabela de alta visibilidade que destaca equipamentos com anomalias graves.
+
+* **Endpoint:** `GET /api/transparencia/alertas`
+* **Lógica de Negócio:** Filtra ativos onde o `percentualCustoSobreAquisicao` ultrapassa 50% ou equipamentos marcados como **ociosos** por falta de uso.
+
+#### **E. Dossiê por Patrimônio (Busca Técnica)**
+
+Módulo de consulta individual que gera uma ficha completa do ativo.
+
+* **Endpoint:** `GET /api/transparencia/auditoria/{tag}`
+* **O que o Dossiê exibe:**
+* **Status de Saúde:** (EXCELENTE, ALERTA, CRÍTICO).
+* **Idade Técnica:** Calculada em meses desde a aquisição.
+* **Recomendação de Auditoria:** Texto gerado pelo microserviço sugerindo a manutenção do contrato ou a substituição imediata do ativo.
+
+
 
 ---
 
-## 16. Autopopulação Dinâmica de Dados (Data Seeding)
+## 13. Governança e Segurança no Fluxo de Dados
 
-Diferente de uma carga estática via SQL, o **EquipMed** implementa uma estratégia de **Carga Dinâmica de Domínio**. Ao iniciar os microserviços em perfil de demonstração (`prod` ou `dev`), um componente `CommandLineRunner` é disparado para popular o ecossistema.
+A arquitetura garante que, embora o Portal de Transparência seja público, a integridade dos dados seja protegida:
 
-### 16.1. O Mecanismo de Seed
-
-O processo de automação lê arquivos JSON de referência (contendo modelos de equipamentos e códigos SIGTAP) e gera uma "Super Massa" de dados realista para três polos principais: **Recife/PE**, **São Paulo/SP** e **Rio de Janeiro/RJ**.
-
-### 16.2. O que é gerado automaticamente?
-
-* **Variabilidade Geográfica:** Equipamentos distribuídos proporcionalmente entre as três cidades.
-* **Histórico de Vida Útil:** O gerador calcula datas de aquisição retroativas, gerando "idades" diferentes para as máquinas, o que permite testar os cálculos de depreciação e obsolescência.
-* **Simulação de Estresse Financeiro:** * O sistema gera aleatoriamente manutenções preventivas (baixo custo).
-* O sistema injeta **manutenções corretivas críticas** em equipamentos aleatórios para que os alertas de auditoria (Custo > 50%) apareçam de forma orgânica no Dashboard.
-
-
-* **Volume de Produção:** Milhares de registros de "Uso" são criados e vinculados a códigos SIGTAP reais, permitindo a visualização imediata da produtividade por município.
-
-### 16.3. Vantagens desta Abordagem
-
-* **Validação de Regras de Negócio:** Como os dados passam pelas camadas de `Service`, todas as validações de domínio (como a compatibilidade SIGTAP) são testadas durante a carga.
-* **Demonstração de Performance:** A automação gera massa suficiente para validar a paginação do Frontend e a eficiência do cache **Redis** no `ms-transparencia`.
-* **Zero Configuração:** O avaliador não precisa executar scripts manuais; basta subir o ambiente e os dados "brotam" no dashboard em poucos segundos.
-
----
-
-## 17. Como visualizar os dados gerados
-
-Após o `docker-compose up`, você verá nos logs dos microserviços:
-`INFO: [SEED] Iniciando carga de 500 registros de uso para a Unidade X...`
-
-Ao abrir o Dashboard (`http://localhost`), você encontrará:
-
-1. **Indicadores Reais:** Gráficos e sumários populados com a média de Recife, SP e RJ.
-2. **Cenários de Teste:** Equipamentos em vermelho (críticos) e verde (excelentes) prontos para inspeção.
-3. **Dossiês Completos:** Tags de patrimônio prontas para serem consultadas na busca individual.
+1. **Read-Only Public Access:** O Portal consome apenas o `ms-transparencia`, que não possui métodos de escrita expostos ao público.
+2. **CORS & Gateway:** Todas as chamadas passam pelo **API Gateway**, que atua como o mediador entre a rede do container Nginx e a rede interna dos microserviços.
+3. **Cache Resilience:** O uso de **Redis** no backend de transparência garante que, mesmo sob alto volume de acessos públicos, a carga nos microserviços de escrita (`ms-equipamentos` e `ms-operacional`) permaneça baixa.
 
 ---
