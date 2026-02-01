@@ -51,6 +51,8 @@ services:
       - "5007:5005"
     environment:
       SPRING_PROFILES_ACTIVE: "prod"
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
       JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     depends_on:
       equipmed_db:
@@ -68,25 +70,26 @@ services:
     command: redis-server --save 60 1 --loglevel warning
     networks:
       - equipmed_network
-#
-#  # MS-TRANSPARENCIA
-#  ms-transparencia:
-#    build:
-#      context: .
-#      dockerfile: ./ms-transparencia/Dockerfile
-#    container_name: ms-transparencia
-#    ports:
-#      - "8083:8083"
-#      - "5008:5005"
-#    environment:
-#      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
-#    depends_on:
-#      equipmed_db:
-#        condition: service_healthy
-#    restart: on-failure
-#    networks:
-#      - equipmed_network
-#
+
+  # MS-TRANSPARENCIA
+  ms-transparencia:
+    build:
+      context: .
+      dockerfile: ./ms-transparencia/Dockerfile
+    container_name: ms-transparencia
+    ports:
+      - "8083:8083"
+      - "5008:5005"
+    environment:
+      SPRING_PROFILES_ACTIVE: "prod"
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+    depends_on:
+      equipmed_db:
+        condition: service_healthy
+    restart: on-failure
+    networks:
+      - equipmed_network
+
 #  zookeeper:
 #    image: zookeeper:3.8
 #    container_name: zookeeper

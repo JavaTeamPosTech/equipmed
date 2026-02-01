@@ -12,8 +12,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://equipmed_db:5432/operacional_db
-    username: user
-    password: password
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   sql:
@@ -23,7 +23,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
 
 ms:
   equipamentos:
