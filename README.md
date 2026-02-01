@@ -352,4 +352,50 @@ A arquitetura garante que, embora o Portal de Transparência seja público, a in
 2. **CORS & Gateway:** Todas as chamadas passam pelo **API Gateway**, que atua como o mediador entre a rede do container Nginx e a rede interna dos microserviços.
 3. **Cache Resilience:** O uso de **Redis** no backend de transparência garante que, mesmo sob alto volume de acessos públicos, a carga nos microserviços de escrita (`ms-equipamentos` e `ms-operacional`) permaneça baixa.
 
----
+## 14. Testes e Validação (Postman Collection)
+
+Para facilitar a validação das regras de negócio, contratos de API e o fluxo de governança via Gateway, disponibilizamos uma coleção completa de requisições **Postman**.
+
+### 14.1. Como Utilizar
+
+1. Certifique-se de que o ambiente Docker está rodando (`docker compose up`).
+2. Importe o arquivo JSON da coleção (localizado em `/docs/postman/equipmed_collection.json`) para o seu Postman.
+3. Todas as requisições estão configuradas para apontar para o **API Gateway (Porta 8080)**.
+
+### 14.2. Estrutura da Coleção
+
+A coleção está organizada em três pastas principais, refletindo a arquitetura de microserviços:
+
+| Pasta | Descrição | Principais Recursos |
+| --- | --- | --- |
+| **Equipamentos** | Gestão do inventário técnico. | Cadastro (com `X-API-KEY`), listagem paginada e alteração de status. |
+| **Operacional** | Registro de eventos de uso e custo. | Registro de uso (validação SIGTAP) e manutenções corretivas. |
+| **Transparência** | Consumo de dados agregados. | Dashboards de cidades, unidades de saúde e o Dossiê de Auditoria por tag. |
+
+### 14.3. Exemplo de Requisição com Segurança
+
+Para os endpoints de escrita, o sistema exige a validação de jurisdição via Header. Exemplo de cadastro:
+
+```http
+POST /api/equipamentos
+Content-Type: application/json
+X-API-KEY: tri-olinda-key-456
+
+{
+  "tagPatrimonio": "SUS-051",
+  "tipo": "ACELERADOR_LINEAR",
+  "unidadeDeSaude": "Hospital Tricentenário",
+  "cidade": "Olinda",
+  "valorAquisicao": 4500000.00
+}
+
+```
+
+> **Nota de Auditoria:** Se você tentar enviar uma `X-API-KEY` de Olinda para cadastrar um equipamento em Recife, o **API Gateway** e o **MS-Equipamentos** bloquearão a requisição com `403 Forbidden` ou `400 Bad Request`.
+
+### 14.4. Dinâmica de Testes e UUIDs
+
+Como o projeto utiliza UUIDs gerados aleatoriamente durante o *Data Seeding* (Super Massa), a coleção está preparada para trabalhar com **Postman Variables**:
+
+1. **Captura Dinâmica:** Ao realizar um `GET /api/equipamentos`, recomendamos copiar o `id` de um equipamento gerado e atualizar a variável `{{equipamento_id}}` na sua coleção.
+2. **Endpoints de Escrita:** Os exemplos de `POST` (Uso e Manutenção) utilizam essas variáveis para garantir que os registros operacionais sejam vinculados corretamente a ativos existentes no banco de dados daquela execução.
