@@ -271,16 +271,24 @@ Localizado no topo da página, fornece os KPIs (Key Performance Indicators) glob
 * **Dados Vinculados:** * `% Disponibilidade Geral`: Cálculo em tempo real do tempo de uptime das máquinas.
 * `Investimento Total`: Soma histórica de manutenções registradas no `ms-operacional`.
 
+```bash
+curl -X GET http://localhost:8080/api/transparencia/sumario
+```
+
 <p align="left">
   <img src="docs/images/secao_sumario.png" width="800px" alt="Painel Executivo">
 </p>
 
 #### **B. Gestão Municipal Detalhada**
 
-Apresenta cards dinâmicos para cada cidade monitorada (**Recife, Olinda e Rio de Janeiro**).
+Apresenta cards dinâmicos para cada cidade monitorada (**Recife, São Paulo e Rio de Janeiro**).
 
 * **Endpoint:** `GET /api/transparencia/cidades`
 * **Inteligência Visual:** O sistema altera a cor dos badges e barras de progresso baseando-se no índice de produtividade e alertas críticos de cada município.
+
+```bash
+curl -X GET http://localhost:8080/api/transparencia/cidades
+```
 
 <p align="left">
   <img src="docs/images/secao_cidades.png" width="800px" alt="Painel Cidades">
@@ -294,6 +302,10 @@ Uma tabela técnica que cruza os dados de inventário com a produtividade operac
 * **Data-Binding:** * **Exames:** Quantidade de registros SIGTAP processados pelo `ms-operacional`.
 * **Alertas:** Contador de inconsistências financeiras detectadas pelo motor de auditoria.
 
+```bash
+curl -X GET http://localhost:8080/api/transparencia/unidades
+```
+
 <p align="left">
   <img src="docs/images/secao_unidade_saude.png" width="800px" alt="Painel Unidade de Saude">
 </p>
@@ -304,6 +316,10 @@ Tabela de alta visibilidade que destaca equipamentos com anomalias graves.
 
 * **Endpoint:** `GET /api/transparencia/alertas`
 * **Lógica de Negócio:** Filtra ativos onde o `percentualCustoSobreAquisicao` ultrapassa 50% ou equipamentos marcados como **ociosos** por falta de uso.
+
+```bash
+curl -X GET http://localhost:8080/api/transparencia/alertas
+```
 
 <p align="left">
   <img src="docs/images/secao_alerta.png" width="800px" alt="Painel Cidades">
@@ -318,6 +334,10 @@ Módulo de consulta individual que gera uma ficha completa do ativo.
 * **Status de Saúde:** (EXCELENTE, ALERTA, CRÍTICO).
 * **Idade Técnica:** Calculada em meses desde a aquisição.
 * **Recomendação de Auditoria:** Texto gerado pelo microserviço sugerindo a manutenção do contrato ou a substituição imediata do ativo.
+
+```bash
+curl -X GET http://localhost:8080/api/transparencia/auditoria/{tag}
+```
 
 <p align="left">
   <img src="docs/images/secao_busca_tag.png" width="300px" />
