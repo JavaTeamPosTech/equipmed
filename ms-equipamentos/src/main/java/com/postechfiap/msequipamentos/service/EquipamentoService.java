@@ -10,6 +10,9 @@ import org.springframework.data.domain.Pageable;
 import java.util.UUID;
 
 public interface EquipamentoService {
+    EquipamentoResponseDTO criar(EquipamentoRequestDTO dto,
+                                 String headerUnidade,
+                                 String headerCidade);
     EquipamentoResponseDTO criar(EquipamentoRequestDTO dto);
     EquipamentoResponseDTO buscarPorId(UUID id);
     Page<EquipamentoResponseDTO> listarComFiltros(

@@ -23,8 +23,12 @@ public class EquipamentoController {
     private final EquipamentoService service;
 
     @PostMapping
-    public ResponseEntity<EquipamentoResponseDTO> criar(@RequestBody EquipamentoRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.criar(dto));
+    public ResponseEntity<EquipamentoResponseDTO> criar(
+            @RequestBody EquipamentoRequestDTO dto,
+            @RequestHeader("X-Unidade-Nome") String unidadeHeader,
+            @RequestHeader("X-Unidade-Cidade") String cidadeHeader
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.criar(dto, unidadeHeader, cidadeHeader));
     }
 
     @GetMapping("/{id}")

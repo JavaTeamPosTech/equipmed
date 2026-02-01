@@ -1,0 +1,14 @@
+[
+  {
+    "key": "hc-recife-key-123",
+    "unidadeDeSaude": "Hospital das Clínicas",
+    "cidade": "Recife",
+    "estado": "PE"
+  },
+  {
+    "key": "tri-olinda-key-456",
+    "unidadeDeSaude": "Hospital Tricentenário",
+    "cidade": "Olinda",
+    "estado": "PE"
+  }
+]

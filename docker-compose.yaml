@@ -110,7 +110,6 @@ services:
     networks:
       - equipmed_network
 
-
   #  zookeeper:
 #    image: zookeeper:3.8
 #    container_name: zookeeper

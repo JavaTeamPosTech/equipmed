@@ -4,6 +4,7 @@ import com.postechfiap.msequipamentos.dto.EquipamentoRequestDTO;
 import com.postechfiap.msequipamentos.dto.EquipamentoResponseDTO;
 import com.postechfiap.msequipamentos.enums.StatusEquipamentoEnum;
 import com.postechfiap.msequipamentos.enums.TipoEquipamentoEnum;
+import com.postechfiap.msequipamentos.exception.SecurityInconsistencyException;
 import com.postechfiap.msequipamentos.model.Equipamento;
 import com.postechfiap.msequipamentos.repository.EquipamentoRepository;
 import com.postechfiap.msequipamentos.service.EquipamentoService;
@@ -28,6 +29,33 @@ import java.util.UUID;
 public class EquipamentoServiceImpl implements EquipamentoService {
 
     private final EquipamentoRepository repository;
+
+    @Override
+    @Transactional
+    public EquipamentoResponseDTO criar(EquipamentoRequestDTO dto,
+                                        String headerUnidade,
+                                        String headerCidade) {
+        log.info("Operacao=Criação TagPatrimonio={} Unidade={}", dto.tagPatrimonio(), dto.unidadeDeSaude());
+
+        if (!dto.unidadeDeSaude().equalsIgnoreCase(headerUnidade)) {
+            throw new SecurityInconsistencyException(
+                    "VIOLAÇÃO DE JURISDIÇÃO: Esta API KEY pertence ao [" + headerUnidade +
+                            "], mas tentou cadastrar um ativo para [" + dto.unidadeDeSaude() + "]."
+            );
+        }
+
+        if (!dto.cidade().equalsIgnoreCase(headerCidade)) {
+            throw new SecurityInconsistencyException(
+                    "VIOLAÇÃO TERRITORIAL: Esta chave só tem permissão para operar na cidade de " + headerCidade
+            );
+        }
+
+        Equipamento equipamento = dto.toEntity();
+        Equipamento salvo = repository.save(equipamento);
+
+        log.info("Status=Sucesso Id={} TagPatrimonio={}", salvo.getId(), salvo.getTagPatrimonio());
+        return EquipamentoResponseDTO.fromEntity(salvo);
+    }
 
     @Override
     @Transactional
