@@ -1,6 +1,9 @@
 package com.postechfiap.mstransparencia.service;
 
 import com.postechfiap.mstransparencia.dto.EquipamentoCompletoDTO;
+import com.postechfiap.mstransparencia.dto.PainelResumoDTO;
+import com.postechfiap.mstransparencia.dto.UnidadeResumoDTO;
+
 import java.util.List;
 
 /**
@@ -8,11 +11,8 @@ import java.util.List;
  */
 public interface TransparenciaService {
 
-    /**
-     * Consolida dados cadastrais e operacionais de todos os equipamentos
-     * para exibição no painel público.
-     * * @return Lista de equipamentos com KPIs de uso e custo integrados.
-     */
     List<EquipamentoCompletoDTO> listarPainelGeral();
-
+    PainelResumoDTO obterSumarioExecutivo();
+    List<EquipamentoCompletoDTO> listarAlertasCriticos();
+    List<UnidadeResumoDTO> listarResumoPorUnidade();
 }

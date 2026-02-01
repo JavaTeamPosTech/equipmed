@@ -1,6 +1,8 @@
 package com.postechfiap.mstransparencia.controller;
 
 import com.postechfiap.mstransparencia.dto.EquipamentoCompletoDTO;
+import com.postechfiap.mstransparencia.dto.PainelResumoDTO;
+import com.postechfiap.mstransparencia.dto.UnidadeResumoDTO;
 import com.postechfiap.mstransparencia.service.TransparenciaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,5 +32,20 @@ public class TransparenciaController {
         log.info("Painel Geral processado com sucesso em {}ms. Total de registros: {}", duration, response.size());
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/sumario")
+    public ResponseEntity<PainelResumoDTO> getSumario() {
+        return ResponseEntity.ok(transparenciaService.obterSumarioExecutivo());
+    }
+
+    @GetMapping("/alertas")
+    public ResponseEntity<List<EquipamentoCompletoDTO>> getAlertas() {
+        return ResponseEntity.ok(transparenciaService.listarAlertasCriticos());
+    }
+
+    @GetMapping("/unidades")
+    public ResponseEntity<List<UnidadeResumoDTO>> getPorUnidade() {
+        return ResponseEntity.ok(transparenciaService.listarResumoPorUnidade());
     }
 }
