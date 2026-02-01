@@ -19,3 +19,10 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: false
+
+app:
+  services:
+    ms-equipamentos:
+      url: http://ms-equipamentos:8081/api/equipamentos
+    ms-operacional:
+      url: http://ms-operacional:8082/api/operacional

@@ -81,32 +81,31 @@ public class OperacionalServiceImpl implements OperacionalService {
     public Map<UUID, EquipamentoResumoDTO> buscarResumoParaTransparencia(List<UUID> equipamentoIds) {
         Map<UUID, EquipamentoResumoDTO> resultado = new HashMap<>();
 
-        // Para teste, vamos pegar os últimos 10 anos para garantir que a massa de dados apareça
+        // Mantemos os 12 meses para custo, mas a ociosidade é calculada sobre a data global
         LocalDate periodoBusca = LocalDate.now().minusMonths(12);
-        LocalDateTime cincoDiasAtras = LocalDateTime.now().minusDays(5);
+        LocalDateTime limiteOciosidade = LocalDateTime.now().minusDays(5);
 
         for (UUID id : equipamentoIds) {
-            // Usos
+            // 1. Total de usos (Long)
             long totalUsos = usoRepository.countByEquipamentoId(id);
-            List<Uso> usosRecentes = usoRepository.findByEquipamentoIdAndDataHoraAfter(id, cincoDiasAtras);
 
-            LocalDateTime dataUltimoUso = usosRecentes.stream()
-                    .map(Uso::getDataHora)
-                    .max(LocalDateTime::compareTo)
-                    .orElse(null);
+            // 2. Data do último uso (Busca no histórico total via MAX do SQL)
+            LocalDateTime dataUltimoUso = usoRepository.findDataUltimoUso(id);
 
-            // Manutenções
+            // 3. Custos de manutenção
             BigDecimal custoTotal = manutencaoRepository.somarGastosNoPeriodo(id, periodoBusca);
             long qtdManutencoes = manutencaoRepository.contarManutencoesNoPeriodo(id, periodoBusca);
 
-            log.debug("ID={} | Custo={} | Qtd={}", id, custoTotal, qtdManutencoes);
+            // 4. Lógica de Ociosidade:
+            // Se a data do último uso for nula ou anterior a 5 dias atrás, está ociosa.
+            boolean isOciosa = (dataUltimoUso == null || dataUltimoUso.isBefore(limiteOciosidade));
 
             resultado.put(id, new EquipamentoResumoDTO(
                     totalUsos,
                     dataUltimoUso,
                     custoTotal,
                     (int) qtdManutencoes,
-                    usosRecentes.isEmpty(),
+                    isOciosa,
                     false
             ));
         }

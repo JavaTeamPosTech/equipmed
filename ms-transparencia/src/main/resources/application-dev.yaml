@@ -22,3 +22,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+
+app:
+  services:
+    ms-equipamentos:
+      url: http://localhost:8081/api/equipamentos
+    ms-operacional:
+      url: http://localhost:8082/api/operacional
