@@ -41,6 +41,16 @@ services:
     networks:
       - equipmed_network
 
+  frontend:
+    image: nginx:alpine
+    container_name: frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    networks:
+      - equipmed_network
+
 networks:
   equipmed_network:
     driver: bridge

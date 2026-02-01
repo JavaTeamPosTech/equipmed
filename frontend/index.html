@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthTrack | Portal de Transparência SUS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+<nav class="bg-blue-700 text-white p-4 shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold"><i class="fa-solid fa-hospital-user mr-2"></i>HealthTrack Transparência</h1>
+        <span class="text-[10px] bg-blue-800 px-3 py-1 rounded-full uppercase tracking-widest font-bold">Painel de Auditoria v1.0</span>
+    </div>
+</nav>
+
+<main class="container mx-auto py-8 px-4">
+
+    <section id="sumario" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+        <div class="animate-pulse bg-white h-32 rounded-xl shadow-md"></div>
+        <div class="animate-pulse bg-white h-32 rounded-xl shadow-md"></div>
+        <div class="animate-pulse bg-white h-32 rounded-xl shadow-md"></div>
+        <div class="animate-pulse bg-white h-32 rounded-xl shadow-md"></div>
+    </section>
+
+    <section class="mb-10">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-gray-700"><i class="fa-solid fa-city mr-2 text-blue-500"></i>Gestão Municipal</h2>
+        </div>
+        <div id="grid-cidades" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        </div>
+    </section>
+
+    <section class="mb-10 bg-white p-6 rounded-xl shadow-md border-t-4 border-blue-400">
+        <div class="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
+            <h2 class="text-xl font-bold text-gray-700"><i class="fa-solid fa-hospital mr-2"></i>Performance por Unidade de Saúde</h2>
+            <div class="flex items-center gap-3 bg-gray-50 p-2 rounded-lg">
+                <span id="page-info" class="text-xs font-bold text-gray-500 min-w-[100px] text-center">Carregando...</span>
+                <button onclick="mudarPagina(-1)" class="p-1 px-3 bg-white border rounded shadow-sm hover:bg-gray-100"><i class="fa-solid fa-chevron-left"></i></button>
+                <button onclick="mudarPagina(1)" class="p-1 px-3 bg-white border rounded shadow-sm hover:bg-gray-100"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+        <div class="overflow-x-auto custom-scroll">
+            <table class="w-full text-left text-sm">
+                <thead>
+                <tr class="border-b text-gray-400 uppercase text-[10px] tracking-widest">
+                    <th class="py-3">Unidade</th>
+                    <th>Máquinas</th>
+                    <th>Exames</th>
+                    <th>Investimento</th>
+                    <th>Disponibilidade</th>
+                    <th>Alertas</th>
+                </tr>
+                </thead>
+                <tbody id="lista-unidades"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <section class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md border-t-4 border-red-500">
+            <h2 class="text-xl font-bold mb-4 text-red-600"><i class="fa-solid fa-triangle-exclamation mr-2"></i>Alertas Críticos</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                    <tr class="border-b text-gray-500 uppercase">
+                        <th class="py-2">TAG</th>
+                        <th>TIPO</th>
+                        <th>UNIDADE</th>
+                        <th>CUSTO/AQ %</th>
+                        <th>STATUS</th>
+                    </tr>
+                    </thead>
+                    <tbody id="lista-alertas"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="bg-white p-6 rounded-xl shadow-md border-t-4 border-blue-500">
+            <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-magnifying-glass mr-2"></i>Busca Individual</h2>
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="inputTag" placeholder="EX: SUS-001" class="border p-2 rounded w-full uppercase outline-none focus:ring-2 focus:ring-blue-500">
+                <button onclick="buscarFicha()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"><i class="fa-solid fa-search"></i></button>
+            </div>
+            <div id="resultado-busca" class="text-sm p-4 bg-blue-50 rounded-lg border border-blue-100 hidden"></div>
+        </section>
+    </div>
+</main>
+
+<script>
+    const API_URL = 'http://localhost:8080/api/transparencia';
+    let unidadesData = [];
+    let paginaAtual = 1;
+    const itensPorPagina = 8;
+
+    async function carregarDados() {
+        try {
+            // 1. Carregar Sumário
+            const resSum = await fetch(`${API_URL}/sumario`);
+            const s = await resSum.json();
+            document.getElementById('sumario').innerHTML = `
+                <div class="bg-white p-6 rounded-xl shadow-md border-b-4 border-green-500">
+                    <p class="text-gray-500 text-[10px] uppercase font-bold">Disponibilidade</p>
+                    <p class="text-3xl font-black text-green-600">${s.indiceDisponibilidadeGeral.toFixed(1)}%</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border-b-4 border-blue-500">
+                    <p class="text-gray-500 text-[10px] uppercase font-bold">Total Ativos</p>
+                    <p class="text-3xl font-black text-blue-600">${s.totalEquipamentos}</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border-b-4 border-red-500">
+                    <p class="text-gray-500 text-[10px] uppercase font-bold">Ociosos</p>
+                    <p class="text-3xl font-black text-red-600">${s.equipamentosOciosos}</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border-b-4 border-orange-500">
+                    <p class="text-gray-500 text-[10px] uppercase font-bold">Investimento</p>
+                    <p class="text-lg font-black text-gray-800">R$ ${s.investimentoTotalManutencao.toLocaleString('pt-BR')}</p>
+                </div>`;
+
+            // 2. Carregar Cidades
+            const resCid = await fetch(`${API_URL}/cidades`);
+            const cidades = await resCid.json();
+            document.getElementById('grid-cidades').innerHTML = cidades.map(c => `
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-bold text-gray-800">${c.cidade}</h3>
+                        <span class="text-[9px] px-2 py-1 rounded bg-blue-100 text-blue-700 font-bold">${c.indiceDisponibilidade.toFixed(0)}% DISP.</span>
+                    </div>
+                    <p class="text-xs text-blue-600 font-bold">R$ ${c.investimentoManutencao.toLocaleString('pt-BR')}</p>
+                </div>`).join('');
+
+            // 3. Carregar Unidades (Prepara para Paginação)
+            const resUni = await fetch(`${API_URL}/unidades`);
+            unidadesData = await resUni.json();
+            renderizarUnidades();
+
+            // 4. Carregar Alertas
+            const resAlert = await fetch(`${API_URL}/alertas`);
+            const alertas = await resAlert.json();
+            document.getElementById('lista-alertas').innerHTML = alertas.slice(0, 10).map(e => `
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="py-3 font-mono font-bold text-blue-600">${e.tagPatrimonio}</td>
+                    <td>${e.tipo}</td>
+                    <td class="text-gray-400 uppercase" style="font-size: 10px">${e.unidadeDeSaude}</td>
+                    <td class="font-bold ${e.percentualCustoSobreAquisicao > 50 ? 'text-red-500' : 'text-orange-500'}">${e.percentualCustoSobreAquisicao.toFixed(1)}%</td>
+                    <td><span class="px-2 py-0.5 rounded-full bg-red-100 text-red-600 font-bold uppercase text-[9px]">${e.isOciosa ? 'Ocioso' : 'Custo Alto'}</span></td>
+                </tr>`).join('');
+
+        } catch (err) { console.error("Erro ao carregar API:", err); }
+    }
+
+    function renderizarUnidades() {
+        const inicio = (paginaAtual - 1) * itensPorPagina;
+        const paginados = unidadesData.slice(inicio, inicio + itensPorPagina);
+        const totalPags = Math.ceil(unidadesData.length / itensPorPagina);
+
+        document.getElementById('page-info').innerText = `Página ${paginaAtual} de ${totalPags}`;
+        const tbody = document.getElementById('lista-unidades');
+
+        tbody.innerHTML = paginados.map(u => `
+            <tr class="border-b hover:bg-blue-50 transition-colors">
+                <td class="py-4 font-bold text-gray-700">${u.unidadeDeSaude}</td>
+                <td class="text-center">${u.totalEquipamentos}</td>
+                <td>${u.examesRealizados.toLocaleString('pt-BR')}</td>
+                <td class="font-bold text-blue-600">R$ ${u.investimentoManutencao.toLocaleString('pt-BR')}</td>
+                <td>
+                    <div class="w-24 bg-gray-200 rounded-full h-1.5 mb-1">
+                        <div class="h-1.5 rounded-full ${u.indiceDisponibilidade > 70 ? 'bg-green-500' : 'bg-red-500'}" style="width: ${u.indiceDisponibilidade}%"></div>
+                    </div>
+                    <span class="text-[9px] text-gray-400">${u.indiceDisponibilidade.toFixed(1)}%</span>
+                </td>
+                <td class="text-center">
+                    ${u.alertasCriticos > 0 ? `<span class="bg-red-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold">${u.alertasCriticos}</span>` : '<i class="fa-solid fa-check text-green-500"></i>'}
+                </td>
+            </tr>`).join('');
+    }
+
+    function mudarPagina(dir) {
+        const total = Math.ceil(unidadesData.length / itensPorPagina);
+        if (paginaAtual + dir >= 1 && paginaAtual + dir <= total) {
+            paginaAtual += dir;
+            renderizarUnidades();
+        }
+    }
+
+    async function buscarFicha() {
+        const tag = document.getElementById('inputTag').value.trim();
+        if(!tag) return;
+        try {
+            const res = await fetch(`${API_URL}/auditoria/${tag}`);
+            const f = await res.json();
+            const box = document.getElementById('resultado-busca');
+            box.classList.remove('hidden');
+            box.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <p class="font-bold text-blue-800">${f.tagPatrimonio}</p>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-600 text-white">${f.statusSaude}</span>
+                </div>
+                <p class="text-xs text-gray-600"><b>Recomendação:</b> ${f.recomendacaoAuditoria}</p>
+                <p class="text-[10px] text-gray-400 mt-2">Custo total: R$ ${f.custoTotalManutencao.toLocaleString('pt-BR')}</p>
+            `;
+        } catch (e) { alert("Tag não encontrada!"); }
+    }
+
+    carregarDados();
+</script>
+</body>
+</html>

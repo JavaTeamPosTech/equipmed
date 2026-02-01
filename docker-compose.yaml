@@ -100,7 +100,18 @@ services:
     networks:
       - equipmed_network
 
-#  zookeeper:
+  frontend:
+    image: nginx:alpine
+    container_name: frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    networks:
+      - equipmed_network
+
+
+  #  zookeeper:
 #    image: zookeeper:3.8
 #    container_name: zookeeper
 #    environment:
