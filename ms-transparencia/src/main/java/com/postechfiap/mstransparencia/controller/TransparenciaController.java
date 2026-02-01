@@ -1,9 +1,6 @@
 package com.postechfiap.mstransparencia.controller;
 
-import com.postechfiap.mstransparencia.dto.CidadeResumoDTO;
-import com.postechfiap.mstransparencia.dto.EquipamentoCompletoDTO;
-import com.postechfiap.mstransparencia.dto.PainelResumoDTO;
-import com.postechfiap.mstransparencia.dto.UnidadeResumoDTO;
+import com.postechfiap.mstransparencia.dto.*;
 import com.postechfiap.mstransparencia.service.TransparenciaService;
 import com.postechfiap.mstransparencia.util.LocalizacaoUtil;
 import lombok.RequiredArgsConstructor;
@@ -64,5 +61,11 @@ public class TransparenciaController {
                 .filter(e -> LocalizacaoUtil.extrairCidade(e.localizacaoCompleta()).equalsIgnoreCase(nome))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(filtrados);
+    }
+
+    @GetMapping("/auditoria/{tag}")
+    public ResponseEntity<FichaAuditoriaDTO> getFichaAuditoria(@PathVariable String tag) {
+        log.info("Auditoria solicitada para o patrimônio: {}", tag);
+        return ResponseEntity.ok(transparenciaService.buscarFichaPorTag(tag));
     }
 }

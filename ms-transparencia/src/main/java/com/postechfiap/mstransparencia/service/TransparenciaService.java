@@ -1,9 +1,6 @@
 package com.postechfiap.mstransparencia.service;
 
-import com.postechfiap.mstransparencia.dto.CidadeResumoDTO;
-import com.postechfiap.mstransparencia.dto.EquipamentoCompletoDTO;
-import com.postechfiap.mstransparencia.dto.PainelResumoDTO;
-import com.postechfiap.mstransparencia.dto.UnidadeResumoDTO;
+import com.postechfiap.mstransparencia.dto.*;
 
 import java.util.List;
 
@@ -17,4 +14,5 @@ public interface TransparenciaService {
     List<EquipamentoCompletoDTO> listarAlertasCriticos();
     List<UnidadeResumoDTO> listarResumoPorUnidade();
     List<CidadeResumoDTO> listarResumoPorCidade();
+    FichaAuditoriaDTO buscarFichaPorTag(String tag);
 }

@@ -3,6 +3,7 @@ package com.postechfiap.mstransparencia.service.impl;
 import com.postechfiap.mstransparencia.client.EquipamentoClient;
 import com.postechfiap.mstransparencia.client.OperacionalClient;
 import com.postechfiap.mstransparencia.dto.*;
+import com.postechfiap.mstransparencia.exception.ResourceNotFoundException;
 import com.postechfiap.mstransparencia.service.TransparenciaService;
 import com.postechfiap.mstransparencia.util.LocalizacaoUtil;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -102,6 +105,47 @@ public class TransparenciaServiceImpl implements TransparenciaService {
                 })
                 .sorted(Comparator.comparing(CidadeResumoDTO::totalEquipamentos).reversed())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public FichaAuditoriaDTO buscarFichaPorTag(String tag) {
+        // 1. Localiza o equipamento na lista completa (aproveitando o cache)
+        EquipamentoCompletoDTO equip = this.listarPainelGeral().stream()
+                .filter(e -> e.tagPatrimonio().equalsIgnoreCase(tag))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Patrimônio [" + tag + "] não localizado no parque tecnológico."));
+
+        // 2. Lógica Analítica de Auditoria
+        long mesesUso = ChronoUnit.MONTHS.between(equip.dataAquisicao(), LocalDate.now());
+        double percentual = equip.percentualCustoSobreAquisicao();
+
+        String statusSaude = "EXCELENTE";
+        String recomendacao = "MANTER";
+
+        if (percentual > 50.0 || equip.isOciosa()) {
+            statusSaude = "ALERTA";
+            recomendacao = "REVISAR CONTRATO";
+        }
+
+        if (percentual > 80.0) {
+            statusSaude = "CRÍTICO";
+            recomendacao = "AVALIAR SUBSTITUIÇÃO";
+        }
+
+        return new FichaAuditoriaDTO(
+                equip.tagPatrimonio(),
+                equip.modelo(),
+                equip.unidadeDeSaude(),
+                equip.localizacaoCompleta(),
+                equip.dataAquisicao(),
+                mesesUso,
+                equip.totalUsos(),
+                equip.dataUltimoUso(),
+                equip.custoTotalManutencao(),
+                percentual,
+                statusSaude,
+                recomendacao
+        );
     }
 
     private EquipamentoCompletoDTO montarEquipamentoCompleto(EquipamentoExternalDTO cad, EquipamentoResumoDTO oper) {
