@@ -39,7 +39,7 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         if (usoRepository.count() > 0) return;
 
-        log.info("Iniciando Super Carga...");
+        log.info("Iniciando Super Carga de Daos Operacionais...");
         InputStream is = new ClassPathResource("cenario-operacional.json").getInputStream();
         JsonNode cenario = objectMapper.readTree(is);
         List<EquipamentoExternalDTO> equipamentos = equipamentoClient.listarTodos(100).content();
