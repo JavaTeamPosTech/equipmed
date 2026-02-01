@@ -4,6 +4,7 @@ import com.postechfiap.mstransparencia.client.EquipamentoClient;
 import com.postechfiap.mstransparencia.client.OperacionalClient;
 import com.postechfiap.mstransparencia.dto.*;
 import com.postechfiap.mstransparencia.service.TransparenciaService;
+import com.postechfiap.mstransparencia.util.LocalizacaoUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -28,21 +29,13 @@ public class TransparenciaServiceImpl implements TransparenciaService {
     @Override
     @Cacheable(value = "painelGeralCache")
     public List<EquipamentoCompletoDTO> listarPainelGeral() {
-        log.info("Iniciando agregação de dados para o Painel Geral de Transparência");
-
-        // 1. Busca todos os dados cadastrais (ms-equipamentos)
+        log.info("Iniciando agregação para o Painel Geral");
         var response = equipamentoClient.listarTodos(1000);
         List<EquipamentoExternalDTO> cadastros = response.content();
 
-        // 2. Extrai os IDs para buscar o operacional em lote (Batch Pattern)
-        List<UUID> ids = cadastros.stream()
-                .map(EquipamentoExternalDTO::id)
-                .toList();
-
-        // 3. Busca o resumo de usos e manutenções (ms-operacional)
+        List<UUID> ids = cadastros.stream().map(EquipamentoExternalDTO::id).toList();
         Map<UUID, EquipamentoResumoDTO> operacionais = operacionalClient.buscarResumoEmLote(ids);
 
-        // 4. Faz o "Join" e aplica as regras de negócio
         return cadastros.stream()
                 .map(cad -> montarEquipamentoCompleto(cad, operacionais.get(cad.id())))
                 .collect(Collectors.toList());
@@ -50,36 +43,20 @@ public class TransparenciaServiceImpl implements TransparenciaService {
 
     @Override
     public PainelResumoDTO obterSumarioExecutivo() {
-        // Busca a lista completa (aproveitando o cache do Redis se existir)
         List<EquipamentoCompletoDTO> todos = this.listarPainelGeral();
-
         long ociosos = todos.stream().filter(EquipamentoCompletoDTO::isOciosa).count();
         long custoElevado = todos.stream().filter(EquipamentoCompletoDTO::isCustoElevado).count();
-
         BigDecimal investimentoTotal = todos.stream()
                 .map(EquipamentoCompletoDTO::custoTotalManutencao)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+        long totalExames = todos.stream().mapToLong(EquipamentoCompletoDTO::totalUsos).sum();
+        double disponibilidade = todos.isEmpty() ? 0.0 : ((double) (todos.size() - ociosos) / todos.size()) * 100;
 
-        long totalExames = todos.stream()
-                .mapToLong(EquipamentoCompletoDTO::totalUsos)
-                .sum();
-
-        double disponibilidade = todos.isEmpty() ? 0.0 :
-                ((double) (todos.size() - ociosos) / todos.size()) * 100;
-
-        return new PainelResumoDTO(
-                todos.size(),
-                totalExames,
-                investimentoTotal,
-                ociosos,
-                custoElevado,
-                disponibilidade
-        );
+        return new PainelResumoDTO(todos.size(), totalExames, investimentoTotal, ociosos, custoElevado, disponibilidade);
     }
 
     @Override
     public List<EquipamentoCompletoDTO> listarAlertasCriticos() {
-        // Retorna apenas equipamentos que são ociosos OU têm custo elevado
         return this.listarPainelGeral().stream()
                 .filter(e -> e.isOciosa() || e.isCustoElevado())
                 .sorted((e1, e2) -> e2.percentualCustoSobreAquisicao().compareTo(e1.percentualCustoSobreAquisicao()))
@@ -88,50 +65,50 @@ public class TransparenciaServiceImpl implements TransparenciaService {
 
     @Override
     public List<UnidadeResumoDTO> listarResumoPorUnidade() {
-        List<EquipamentoCompletoDTO> todos = this.listarPainelGeral();
-
-        return todos.stream()
+        return this.listarPainelGeral().stream()
                 .collect(Collectors.groupingBy(EquipamentoCompletoDTO::unidadeDeSaude))
                 .entrySet().stream()
                 .map(entry -> {
-                    String unidade = entry.getKey();
-                    List<EquipamentoCompletoDTO> equipsDaUnidade = entry.getValue();
+                    List<EquipamentoCompletoDTO> equips = entry.getValue();
+                    BigDecimal custo = equips.stream().map(EquipamentoCompletoDTO::custoTotalManutencao).reduce(BigDecimal.ZERO, BigDecimal::add);
+                    long exames = equips.stream().mapToLong(EquipamentoCompletoDTO::totalUsos).sum();
+                    long ociosos = equips.stream().filter(EquipamentoCompletoDTO::isOciosa).count();
+                    long alertas = equips.stream().filter(e -> e.isOciosa() || e.isCustoElevado()).count();
+                    double disp = ((double) (equips.size() - ociosos) / equips.size()) * 100;
 
-                    long totalExames = equipsDaUnidade.stream()
-                            .mapToLong(EquipamentoCompletoDTO::totalUsos).sum();
+                    return new UnidadeResumoDTO(entry.getKey(), equips.size(), exames, custo, disp, alertas);
+                })
+                .sorted(Comparator.comparing(UnidadeResumoDTO::investimentoManutencao).reversed())
+                .collect(Collectors.toList());
+    }
 
-                    BigDecimal custoTotal = equipsDaUnidade.stream()
+    @Override
+    public List<CidadeResumoDTO> listarResumoPorCidade() {
+        return this.listarPainelGeral().stream()
+                // AGORA USANDO O CAMPO CORRETO: localizacaoCompleta
+                .collect(Collectors.groupingBy(e -> LocalizacaoUtil.extrairCidade(e.localizacaoCompleta())))
+                .entrySet().stream()
+                .map(entry -> {
+                    List<EquipamentoCompletoDTO> equips = entry.getValue();
+                    BigDecimal custo = equips.stream()
                             .map(EquipamentoCompletoDTO::custoTotalManutencao)
                             .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    long exames = equips.stream().mapToLong(EquipamentoCompletoDTO::totalUsos).sum();
+                    long ociosos = equips.stream().filter(EquipamentoCompletoDTO::isOciosa).count();
+                    long alertas = equips.stream().filter(EquipamentoCompletoDTO::isCustoElevado).count();
+                    double disp = equips.isEmpty() ? 0 : ((double) (equips.size() - ociosos) / equips.size()) * 100;
 
-                    long ociosos = equipsDaUnidade.stream()
-                            .filter(EquipamentoCompletoDTO::isOciosa).count();
-
-                    double ociosidade = (double) ociosos / equipsDaUnidade.size() * 100;
-
-                    return new UnidadeResumoDTO(
-                            unidade,
-                            (long) equipsDaUnidade.size(),
-                            totalExames,
-                            custoTotal,
-                            ociosidade
-                    );
+                    return new CidadeResumoDTO(entry.getKey(), equips.size(), exames, custo, disp, alertas);
                 })
-                .sorted(Comparator.comparing(UnidadeResumoDTO::custoTotalManutencao).reversed())
+                .sorted(Comparator.comparing(CidadeResumoDTO::totalEquipamentos).reversed())
                 .collect(Collectors.toList());
     }
 
     private EquipamentoCompletoDTO montarEquipamentoCompleto(EquipamentoExternalDTO cad, EquipamentoResumoDTO oper) {
-        // Fallback para caso o equipamento não tenha dados operacionais ainda
-        if (oper == null) {
-            oper = new EquipamentoResumoDTO(0L, null, BigDecimal.ZERO, 0, true, false);
-        }
+        if (oper == null) oper = new EquipamentoResumoDTO(0L, null, BigDecimal.ZERO, 0, true, false);
 
-        // Cálculo da Regra de Negócio: Custo Elevado (> 50% do valor de aquisição)
-        boolean ociosaReal = oper.dataUltimoUso() == null ||
-                oper.dataUltimoUso().isBefore(LocalDateTime.now().minusDays(5));
         double percentual = EquipamentoCompletoDTO.calcularPercentualCusto(cad.valorAquisicao(), oper.custoTotalManutencao());
-        boolean isCustoElevado = percentual > 50.0;
+        boolean ociosaReal = oper.dataUltimoUso() == null || oper.dataUltimoUso().isBefore(LocalDateTime.now().minusDays(5));
 
         return new EquipamentoCompletoDTO(
                 cad.id(),
@@ -139,6 +116,7 @@ public class TransparenciaServiceImpl implements TransparenciaService {
                 cad.tipo(),
                 cad.modelo(),
                 cad.unidadeDeSaude(),
+                cad.localizacaoCompleta(),
                 cad.status(),
                 cad.valorAquisicao(),
                 cad.dataAquisicao(),
@@ -147,7 +125,7 @@ public class TransparenciaServiceImpl implements TransparenciaService {
                 oper.custoTotalManutencao(),
                 oper.quantidadeManutencoes(),
                 ociosaReal,
-                isCustoElevado,
+                percentual > 50.0,
                 percentual
         );
     }

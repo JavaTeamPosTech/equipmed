@@ -2,11 +2,11 @@ package com.postechfiap.mstransparencia.dto;
 
 import java.math.BigDecimal;
 
-public record UnidadeResumoDTO(
-        String unidadeDeSaude,
+public record CidadeResumoDTO(
+        String cidade,
         long totalEquipamentos,
         long examesRealizados,
         BigDecimal investimentoManutencao,
         double indiceDisponibilidade,
-        long alertasCriticos
+        long alertasCustoElevado
 ) {}

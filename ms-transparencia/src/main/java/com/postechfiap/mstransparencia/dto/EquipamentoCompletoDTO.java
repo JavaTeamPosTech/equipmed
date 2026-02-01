@@ -12,6 +12,7 @@ public record EquipamentoCompletoDTO(
         String tipo,
         String modelo,
         String unidadeDeSaude,
+        String localizacaoCompleta,
         String status,
         BigDecimal valorAquisicao,
         LocalDate dataAquisicao,

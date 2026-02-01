@@ -10,6 +10,7 @@ public record EquipamentoExternalDTO(
         String tipo,
         String modelo,
         String unidadeDeSaude,
+        String localizacaoCompleta,
         String status,
         BigDecimal valorAquisicao,
         LocalDate dataAquisicao
