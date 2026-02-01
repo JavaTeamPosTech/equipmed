@@ -271,7 +271,9 @@ Localizado no topo da página, fornece os KPIs (Key Performance Indicators) glob
 * **Dados Vinculados:** * `% Disponibilidade Geral`: Cálculo em tempo real do tempo de uptime das máquinas.
 * `Investimento Total`: Soma histórica de manutenções registradas no `ms-operacional`.
 
-
+<p align="left">
+  <img src="docs/images/secao_sumario.png" width="800px" alt="Painel Executivo">
+</p>
 
 #### **B. Gestão Municipal Detalhada**
 
@@ -279,6 +281,10 @@ Apresenta cards dinâmicos para cada cidade monitorada (**Recife, Olinda e Rio d
 
 * **Endpoint:** `GET /api/transparencia/cidades`
 * **Inteligência Visual:** O sistema altera a cor dos badges e barras de progresso baseando-se no índice de produtividade e alertas críticos de cada município.
+
+<p align="left">
+  <img src="docs/images/secao_cidades.png" width="800px" alt="Painel Cidades">
+</p>
 
 #### **C. Performance por Unidade de Saúde (Grid Paginado)**
 
@@ -288,7 +294,9 @@ Uma tabela técnica que cruza os dados de inventário com a produtividade operac
 * **Data-Binding:** * **Exames:** Quantidade de registros SIGTAP processados pelo `ms-operacional`.
 * **Alertas:** Contador de inconsistências financeiras detectadas pelo motor de auditoria.
 
-
+<p align="left">
+  <img src="docs/images/secao_unidade_saude.png" width="800px" alt="Painel Unidade de Saude">
+</p>
 
 #### **D. Prioridades de Inspeção (Alertas Críticos)**
 
@@ -296,6 +304,10 @@ Tabela de alta visibilidade que destaca equipamentos com anomalias graves.
 
 * **Endpoint:** `GET /api/transparencia/alertas`
 * **Lógica de Negócio:** Filtra ativos onde o `percentualCustoSobreAquisicao` ultrapassa 50% ou equipamentos marcados como **ociosos** por falta de uso.
+
+<p align="left">
+  <img src="docs/images/secao_alerta.png" width="800px" alt="Painel Cidades">
+</p>
 
 #### **E. Dossiê por Patrimônio (Busca Técnica)**
 
@@ -307,9 +319,10 @@ Módulo de consulta individual que gera uma ficha completa do ativo.
 * **Idade Técnica:** Calculada em meses desde a aquisição.
 * **Recomendação de Auditoria:** Texto gerado pelo microserviço sugerindo a manutenção do contrato ou a substituição imediata do ativo.
 
-
-
----
+<p align="left">
+  <img src="docs/images/secao_busca_tag.png" width="300px" />
+  <img src="docs/images/secao_resultado_tag.png" width="300px" />
+</p>
 
 ## 13. Governança e Segurança no Fluxo de Dados
 
