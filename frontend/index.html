@@ -9,13 +9,14 @@
     <style>
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .ficha-gradient { background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%); }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
 
 <nav class="bg-blue-700 text-white p-4 shadow-lg sticky top-0 z-50">
     <div class="container mx-auto flex justify-between items-center">
-        <h1 class="text-2xl font-bold"><i class="fa-solid fa-hospital-user mr-2"></i>HealthTrack Transparência</h1>
+        <h1 class="text-2xl font-bold flex items-center"><i class="fa-solid fa-hospital-user mr-3"></i>HealthTrack Transparência</h1>
         <span class="text-[10px] bg-blue-800 px-3 py-1 rounded-full uppercase tracking-widest font-bold">Painel de Auditoria v1.0</span>
     </div>
 </nav>
@@ -23,27 +24,31 @@
 <main class="container mx-auto py-8 px-4">
 
     <section id="sumario" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-        <div class="animate-pulse bg-white h-32 rounded-xl shadow-md"></div>
-        <div class="animate-pulse bg-white h-32 rounded-xl shadow-md"></div>
-        <div class="animate-pulse bg-white h-32 rounded-xl shadow-md"></div>
-        <div class="animate-pulse bg-white h-32 rounded-xl shadow-md"></div>
+        <div class="animate-pulse bg-white h-32 rounded-xl shadow-md border-b-4 border-gray-200"></div>
+        <div class="animate-pulse bg-white h-32 rounded-xl shadow-md border-b-4 border-gray-200"></div>
+        <div class="animate-pulse bg-white h-32 rounded-xl shadow-md border-b-4 border-gray-200"></div>
+        <div class="animate-pulse bg-white h-32 rounded-xl shadow-md border-b-4 border-gray-200"></div>
     </section>
 
     <section class="mb-10">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-bold text-gray-700"><i class="fa-solid fa-city mr-2 text-blue-500"></i>Gestão Municipal</h2>
+        <div class="flex items-center justify-between mb-6 px-1">
+            <h2 class="text-xl font-bold text-gray-700 flex items-center">
+                <i class="fa-solid fa-city mr-2 text-blue-500"></i>Gestão Municipal Detalhada
+            </h2>
         </div>
         <div id="grid-cidades" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         </div>
     </section>
 
-    <section class="mb-10 bg-white p-6 rounded-xl shadow-md border-t-4 border-blue-400">
+    <section class="mb-10 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <div class="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
-            <h2 class="text-xl font-bold text-gray-700"><i class="fa-solid fa-hospital mr-2"></i>Performance por Unidade de Saúde</h2>
-            <div class="flex items-center gap-3 bg-gray-50 p-2 rounded-lg">
-                <span id="page-info" class="text-xs font-bold text-gray-500 min-w-[100px] text-center">Carregando...</span>
-                <button onclick="mudarPagina(-1)" class="p-1 px-3 bg-white border rounded shadow-sm hover:bg-gray-100"><i class="fa-solid fa-chevron-left"></i></button>
-                <button onclick="mudarPagina(1)" class="p-1 px-3 bg-white border rounded shadow-sm hover:bg-gray-100"><i class="fa-solid fa-chevron-right"></i></button>
+            <h2 class="text-xl font-bold text-gray-700 flex items-center">
+                <i class="fa-solid fa-hospital-alt mr-2 text-blue-400"></i>Performance por Unidade de Saúde
+            </h2>
+            <div class="flex items-center gap-3 bg-gray-50 p-2 rounded-lg border">
+                <span id="page-info" class="text-xs font-black text-gray-400 uppercase min-w-[120px] text-center">Carregando...</span>
+                <button onclick="mudarPagina(-1)" class="p-1 px-3 bg-white border rounded shadow-sm hover:bg-gray-100 transition-all"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                <button onclick="mudarPagina(1)" class="p-1 px-3 bg-white border rounded shadow-sm hover:bg-gray-100 transition-all"><i class="fa-solid fa-chevron-right text-xs"></i></button>
             </div>
         </div>
         <div class="overflow-x-auto custom-scroll">
@@ -51,30 +56,33 @@
                 <thead>
                 <tr class="border-b text-gray-400 uppercase text-[10px] tracking-widest">
                     <th class="py-3">Unidade</th>
-                    <th>Máquinas</th>
+                    <th class="text-center">Máquinas</th>
                     <th>Exames</th>
                     <th>Investimento</th>
                     <th>Disponibilidade</th>
-                    <th>Alertas</th>
+                    <th class="text-center">Alertas</th>
                 </tr>
                 </thead>
-                <tbody id="lista-unidades"></tbody>
+                <tbody id="lista-unidades" class="text-gray-600"></tbody>
             </table>
         </div>
     </section>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <section class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md border-t-4 border-red-500">
-            <h2 class="text-xl font-bold mb-4 text-red-600"><i class="fa-solid fa-triangle-exclamation mr-2"></i>Alertas Críticos</h2>
+
+        <section class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border-t-4 border-red-500">
+            <h2 class="text-xl font-bold mb-4 text-red-600 flex items-center">
+                <i class="fa-solid fa-triangle-exclamation mr-2"></i>Prioridades de Inspeção de Auditoria
+            </h2>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead>
-                    <tr class="border-b text-gray-500 uppercase">
+                    <tr class="border-b text-gray-400 uppercase tracking-tighter">
                         <th class="py-2">TAG</th>
                         <th>TIPO</th>
                         <th>UNIDADE</th>
                         <th>CUSTO/AQ %</th>
-                        <th>STATUS</th>
+                        <th>MOTIVO</th>
                     </tr>
                     </thead>
                     <tbody id="lista-alertas"></tbody>
@@ -82,13 +90,29 @@
             </div>
         </section>
 
-        <section class="bg-white p-6 rounded-xl shadow-md border-t-4 border-blue-500">
-            <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-magnifying-glass mr-2"></i>Busca Individual</h2>
-            <div class="flex gap-2 mb-4">
-                <input type="text" id="inputTag" placeholder="EX: SUS-001" class="border p-2 rounded w-full uppercase outline-none focus:ring-2 focus:ring-blue-500">
-                <button onclick="buscarFicha()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"><i class="fa-solid fa-search"></i></button>
+        <section class="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-blue-600">
+            <h2 class="text-lg font-bold mb-6 text-blue-700 flex items-center">
+                <i class="fa-solid fa-magnifying-glass-chart mr-2"></i>Dossiê por Patrimônio
+            </h2>
+
+            <div class="space-y-4 mb-8">
+                <div class="relative">
+                    <i class="fa-solid fa-barcode absolute left-3 top-3 text-gray-400"></i>
+                    <input type="text" id="inputTag" placeholder="TAG (EX: SUS-002)"
+                           class="border-2 border-gray-100 p-2 pl-10 rounded-xl w-full uppercase outline-none focus:border-blue-500 transition-all font-mono text-base">
+                </div>
+                <button onclick="buscarFicha()" class="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all font-bold">
+                    GERAR DOSSIÊ
+                </button>
             </div>
-            <div id="resultado-busca" class="text-sm p-4 bg-blue-50 rounded-lg border border-blue-100 hidden"></div>
+
+            <div id="resultado-busca" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+            </div>
+
+            <div id="busca-placeholder" class="text-center py-12 border-2 border-dashed border-gray-100 rounded-2xl">
+                <i class="fa-solid fa-file-invoice text-4xl text-gray-200 mb-3"></i>
+                <p class="text-gray-400 text-xs px-4">Aguardando TAG para processar dados técnicos...</p>
+            </div>
         </section>
     </div>
 </main>
@@ -101,57 +125,80 @@
 
     async function carregarDados() {
         try {
-            // 1. Carregar Sumário
+            // 1. Sumário
             const resSum = await fetch(`${API_URL}/sumario`);
             const s = await resSum.json();
             document.getElementById('sumario').innerHTML = `
-                <div class="bg-white p-6 rounded-xl shadow-md border-b-4 border-green-500">
-                    <p class="text-gray-500 text-[10px] uppercase font-bold">Disponibilidade</p>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border-b-4 border-green-500">
+                    <p class="text-gray-400 text-[10px] uppercase font-bold mb-1 tracking-widest">Saúde Operacional</p>
                     <p class="text-3xl font-black text-green-600">${s.indiceDisponibilidadeGeral.toFixed(1)}%</p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-md border-b-4 border-blue-500">
-                    <p class="text-gray-500 text-[10px] uppercase font-bold">Total Ativos</p>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border-b-4 border-blue-500">
+                    <p class="text-gray-400 text-[10px] uppercase font-bold mb-1 tracking-widest">Equipamentos</p>
                     <p class="text-3xl font-black text-blue-600">${s.totalEquipamentos}</p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-md border-b-4 border-red-500">
-                    <p class="text-gray-500 text-[10px] uppercase font-bold">Ociosos</p>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border-b-4 border-red-500">
+                    <p class="text-gray-400 text-[10px] uppercase font-bold mb-1 tracking-widest">Indisponíveis</p>
                     <p class="text-3xl font-black text-red-600">${s.equipamentosOciosos}</p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-md border-b-4 border-orange-500">
-                    <p class="text-gray-500 text-[10px] uppercase font-bold">Investimento</p>
-                    <p class="text-lg font-black text-gray-800">R$ ${s.investimentoTotalManutencao.toLocaleString('pt-BR')}</p>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border-b-4 border-orange-500">
+                    <p class="text-gray-400 text-[10px] uppercase font-bold mb-1 tracking-widest">Investimento Total</p>
+                    <p class="text-xl font-black text-gray-800">R$ ${s.investimentoTotalManutencao.toLocaleString('pt-BR')}</p>
                 </div>`;
 
-            // 2. Carregar Cidades
+            // 2. Cidades (Cards Completos)
             const resCid = await fetch(`${API_URL}/cidades`);
             const cidades = await resCid.json();
             document.getElementById('grid-cidades').innerHTML = cidades.map(c => `
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-bold text-gray-800">${c.cidade}</h3>
-                        <span class="text-[9px] px-2 py-1 rounded bg-blue-100 text-blue-700 font-bold">${c.indiceDisponibilidade.toFixed(0)}% DISP.</span>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="font-black text-gray-800 uppercase text-lg leading-tight">${c.cidade}</h3>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">${c.totalEquipamentos} Equipamentos Ativos</p>
+                        </div>
+                        <span class="text-[10px] px-2 py-1 rounded-full font-black ${c.indiceDisponibilidade > 80 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                            ${c.indiceDisponibilidade.toFixed(1)}% DISP.
+                        </span>
                     </div>
-                    <p class="text-xs text-blue-600 font-bold">R$ ${c.investimentoManutencao.toLocaleString('pt-BR')}</p>
+
+                    <div class="grid grid-cols-2 gap-2 mb-4">
+                        <div class="bg-gray-50 p-2 rounded-lg">
+                            <p class="text-[9px] text-gray-400 font-bold uppercase">Exames</p>
+                            <p class="text-sm font-black text-gray-700">${c.examesRealizados.toLocaleString('pt-BR')}</p>
+                        </div>
+                        <div class="bg-gray-50 p-2 rounded-lg">
+                            <p class="text-[9px] text-gray-400 font-bold uppercase">Alertas</p>
+                            <p class="text-sm font-black text-red-600">${c.alertasCustoElevado} Críticos</p>
+                        </div>
+                    </div>
+
+                    <div class="border-t pt-3">
+                        <p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Custo Manutenção</p>
+                        <p class="text-lg font-black text-blue-600">R$ ${c.investimentoManutencao.toLocaleString('pt-BR')}</p>
+                        <div class="w-full bg-gray-100 h-1 rounded-full mt-2">
+                             <div class="bg-blue-500 h-1 rounded-full" style="width: ${c.indiceDisponibilidade}%"></div>
+                        </div>
+                    </div>
                 </div>`).join('');
 
-            // 3. Carregar Unidades (Prepara para Paginação)
+            // 3. Unidades (Paginação)
             const resUni = await fetch(`${API_URL}/unidades`);
             unidadesData = await resUni.json();
             renderizarUnidades();
 
-            // 4. Carregar Alertas
+            // 4. Alertas (Tabela Inferior)
             const resAlert = await fetch(`${API_URL}/alertas`);
             const alertas = await resAlert.json();
             document.getElementById('lista-alertas').innerHTML = alertas.slice(0, 10).map(e => `
-                <tr class="border-b hover:bg-gray-50">
+                <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                     <td class="py-3 font-mono font-bold text-blue-600">${e.tagPatrimonio}</td>
-                    <td>${e.tipo}</td>
-                    <td class="text-gray-400 uppercase" style="font-size: 10px">${e.unidadeDeSaude}</td>
-                    <td class="font-bold ${e.percentualCustoSobreAquisicao > 50 ? 'text-red-500' : 'text-orange-500'}">${e.percentualCustoSobreAquisicao.toFixed(1)}%</td>
-                    <td><span class="px-2 py-0.5 rounded-full bg-red-100 text-red-600 font-bold uppercase text-[9px]">${e.isOciosa ? 'Ocioso' : 'Custo Alto'}</span></td>
+                    <td class="font-bold">${e.tipo}</td>
+                    <td class="text-gray-400 uppercase text-[10px]">${e.unidadeDeSaude}</td>
+                    <td class="font-bold text-red-600">${e.percentualCustoSobreAquisicao.toFixed(1)}%</td>
+                    <td><span class="px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-bold uppercase text-[9px]">${e.isOciosa ? 'Ocioso' : 'Custo Alto'}</span></td>
                 </tr>`).join('');
 
-        } catch (err) { console.error("Erro ao carregar API:", err); }
+        } catch (err) { console.error("Falha na carga:", err); }
     }
 
     function renderizarUnidades() {
@@ -159,23 +206,25 @@
         const paginados = unidadesData.slice(inicio, inicio + itensPorPagina);
         const totalPags = Math.ceil(unidadesData.length / itensPorPagina);
 
-        document.getElementById('page-info').innerText = `Página ${paginaAtual} de ${totalPags}`;
+        document.getElementById('page-info').innerText = `Página ${paginaAtual} / ${totalPags}`;
         const tbody = document.getElementById('lista-unidades');
 
         tbody.innerHTML = paginados.map(u => `
-            <tr class="border-b hover:bg-blue-50 transition-colors">
+            <tr class="border-b hover:bg-blue-50/50 transition-all">
                 <td class="py-4 font-bold text-gray-700">${u.unidadeDeSaude}</td>
-                <td class="text-center">${u.totalEquipamentos}</td>
-                <td>${u.examesRealizados.toLocaleString('pt-BR')}</td>
-                <td class="font-bold text-blue-600">R$ ${u.investimentoManutencao.toLocaleString('pt-BR')}</td>
+                <td class="text-center"><span class="bg-gray-100 px-2 py-0.5 rounded-md font-bold text-xs">${u.totalEquipamentos}</span></td>
+                <td class="font-semibold">${u.examesRealizados.toLocaleString('pt-BR')}</td>
+                <td class="font-black text-blue-600">R$ ${u.investimentoManutencao.toLocaleString('pt-BR')}</td>
                 <td>
-                    <div class="w-24 bg-gray-200 rounded-full h-1.5 mb-1">
-                        <div class="h-1.5 rounded-full ${u.indiceDisponibilidade > 70 ? 'bg-green-500' : 'bg-red-500'}" style="width: ${u.indiceDisponibilidade}%"></div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-16 bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                            <div class="h-1.5 ${u.indiceDisponibilidade > 70 ? 'bg-green-500' : 'bg-red-500'}" style="width: ${u.indiceDisponibilidade}%"></div>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-400">${u.indiceDisponibilidade.toFixed(1)}%</span>
                     </div>
-                    <span class="text-[9px] text-gray-400">${u.indiceDisponibilidade.toFixed(1)}%</span>
                 </td>
                 <td class="text-center">
-                    ${u.alertasCriticos > 0 ? `<span class="bg-red-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold">${u.alertasCriticos}</span>` : '<i class="fa-solid fa-check text-green-500"></i>'}
+                    ${u.alertasCriticos > 0 ? `<span class="bg-red-500 text-white px-2 py-0.5 rounded-full text-[10px] font-black">${u.alertasCriticos}</span>` : '<i class="fa-solid fa-check-circle text-green-500"></i>'}
                 </td>
             </tr>`).join('');
     }
@@ -193,18 +242,60 @@
         if(!tag) return;
         try {
             const res = await fetch(`${API_URL}/auditoria/${tag}`);
+            if(!res.ok) throw new Error();
             const f = await res.json();
+
+            document.getElementById('busca-placeholder').classList.add('hidden');
             const box = document.getElementById('resultado-busca');
             box.classList.remove('hidden');
+
+            const statusColor = f.statusSaude === 'EXCELENTE' ? 'bg-green-500' : f.statusSaude === 'ALERTA' ? 'bg-amber-500' : 'bg-red-600';
+
             box.innerHTML = `
-                <div class="flex justify-between items-start mb-2">
-                    <p class="font-bold text-blue-800">${f.tagPatrimonio}</p>
-                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-600 text-white">${f.statusSaude}</span>
+                <div class="ficha-gradient rounded-2xl border border-blue-100 overflow-hidden shadow-xl">
+                    <div class="bg-blue-600 p-4 text-white flex justify-between items-center">
+                        <div>
+                            <p class="text-[9px] uppercase font-bold opacity-75">Patrimônio</p>
+                            <h3 class="text-xl font-black">${f.tagPatrimonio}</h3>
+                        </div>
+                        <div class="${statusColor} px-3 py-1 rounded-xl text-center">
+                            <p class="text-[10px] font-black">${f.statusSaude}</p>
+                        </div>
+                    </div>
+                    <div class="p-5 space-y-4 text-xs">
+                        <div>
+                            <label class="text-gray-400 font-bold uppercase text-[9px]">Equipamento</label>
+                            <p class="font-bold text-gray-800 text-sm">${f.modelo}</p>
+                        </div>
+                        <div>
+                            <label class="text-gray-400 font-bold uppercase text-[9px]">Unidade / Localização</label>
+                            <p class="font-semibold text-gray-600">${f.unidadeDeSaude} — ${f.localizacao}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                             <div class="bg-white p-2 rounded-lg border border-gray-50">
+                                <p class="text-gray-400 font-bold uppercase text-[8px]">Idade</p>
+                                <p class="font-bold">${f.idadeEquipamentoEmMeses} meses</p>
+                             </div>
+                             <div class="bg-white p-2 rounded-lg border border-gray-50 text-right">
+                                <p class="text-gray-400 font-bold uppercase text-[8px]">Exames</p>
+                                <p class="font-bold text-blue-600">${f.totalUsos}</p>
+                             </div>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-blue-50">
+                            <div class="flex justify-between mb-1">
+                                <span class="text-gray-400 uppercase font-bold text-[9px]">Custo Manut.</span>
+                                <span class="font-black text-red-600">${f.percentualConsumidoDoValorOriginal.toFixed(1)}%</span>
+                            </div>
+                            <p class="font-black text-gray-800 text-base">R$ ${f.custoTotalManutencao.toLocaleString('pt-BR')}</p>
+                        </div>
+                        <div class="bg-gray-800 p-4 rounded-xl text-white">
+                             <p class="text-[9px] uppercase font-bold text-gray-400 mb-1">Recomendação Auditoria</p>
+                             <p class="text-sm font-black italic tracking-tight underline decoration-blue-500">${f.recomendacaoAuditoria}</p>
+                        </div>
+                    </div>
                 </div>
-                <p class="text-xs text-gray-600"><b>Recomendação:</b> ${f.recomendacaoAuditoria}</p>
-                <p class="text-[10px] text-gray-400 mt-2">Custo total: R$ ${f.custoTotalManutencao.toLocaleString('pt-BR')}</p>
             `;
-        } catch (e) { alert("Tag não encontrada!"); }
+        } catch (e) { alert("Tag não localizada."); }
     }
 
     carregarDados();
