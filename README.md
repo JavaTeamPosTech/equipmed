@@ -136,13 +136,6 @@ A "Super Massa" de dados gerada pelo EquipMed (Idade x Frequência de Uso x Cust
 * **Manutenção Preditiva:** Antecipar falhas críticas baseado em padrões de uso intenso.
 * **Ranking de Confiabilidade:** Score público para fabricantes que exigem menos manutenções corretivas.
 
----
-Entendido. Vamos elevar o **EquipMed** ao nível de documentação técnica de uma plataforma *Enterprise*. Um README desse porte não apenas lista os nomes, mas detalha os **contratos**, as **regras de validação** e o **esquema de dados**.
-
-Aqui está o **Dossiê Técnico de Engenharia (README Parte 2 - O Mergulho Profundo)**:
-
----
-
 ## 7. Detalhamento de Domínio e Entidades (ERD)
 
 A modelagem de dados foi desenhada para garantir a rastreabilidade total do ativo. Cada microserviço gerencia seu próprio esquema (Database per Service), garantindo o desacoplamento.
