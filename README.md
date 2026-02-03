@@ -182,8 +182,6 @@ O sistema utiliza o **API Gateway (Porta 8080)** como orquestrador. Abaixo os co
 
 ### 8.1. Gestão de Inventário (MS-Equipamentos)
 
-### 8.1. Gestão de Inventário (MS-Equipamentos)
-
 | Método | Endpoint | Payload / Header | Regra de Negócio |
 | --- | --- | --- | --- |
 | **POST** | `/api/equipamentos` | `X-API-KEY` + JSON | Valida se a cidade/unidade no JSON coincide com o dono da Key. |
