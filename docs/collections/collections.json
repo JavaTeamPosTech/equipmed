@@ -1,0 +1,410 @@
+{
+  "info": {
+    "_postman_id": "a6bbd092-1bf7-44f1-b054-11fe03d9cb5b",
+    "name": "EquipMed - Transparência SUS v1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "12166195"
+  },
+  "item": [
+    {
+      "name": "Equipamentos",
+      "item": [
+        {
+          "name": "Listar Equipamentos (Com Filtros e Sort)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.content && jsonData.content.length > 0) {",
+                  "    pm.collectionVariables.set('equipamentoId', jsonData.content[0].id);",
+                  "    pm.collectionVariables.set('tagPatrimonio', jsonData.content[0].tagPatrimonio);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/equipamentos?sort=unidadeDeSaude,asc&page=0&size=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipamentos"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "unidadeDeSaude,asc"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                },
+                {
+                  "key": "cidade",
+                  "value": "Recife",
+                  "disabled": true
+                },
+                {
+                  "key": "tipo",
+                  "value": "TOMOGRAFO",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastrar Equipamento",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tagPatrimonio\": \"SUS-NEW-{{$randomInt}}\",\n  \"tipo\": \"ACELERADOR_LINEAR\",\n  \"marca\": \"Varian\",\n  \"modelo\": \"TrueBeam\",\n  \"dataAquisicao\": \"2025-11-20\",\n  \"valorAquisicao\": 4500000.00,\n  \"unidadeDeSaude\": \"Hospital Tricentenário\",\n  \"cidade\": \"Olinda\",\n  \"estado\": \"PE\",\n  \"fornecedor\": \"Varian Systems\",\n  \"status\": \"ATIVO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/equipamentos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipamentos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/equipamentos/{{equipamentoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipamentos",
+                "{{equipamentoId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Alterar Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"MANUTENCAO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/equipamentos/{{equipamentoId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipamentos",
+                "{{equipamentoId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Alterar Localizacao",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cidade\": \"Recife\",\n  \"estado\": \"PE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/equipamentos/{{equipamentoId}}/localizacao",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipamentos",
+                "{{equipamentoId}}",
+                "localizacao"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Operacional",
+      "item": [
+        {
+          "name": "Registrar Uso (Validação SIGTAP)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"equipamentoId\": \"{{equipamentoId}}\",\n  \"codigoSigtap\": \"03.04.01.026-6\", \n  \"operadorId\": \"OP-PE-081\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/operacional/usos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "operacional",
+                "usos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Registrar Manutenção",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"equipamentoId\": \"{{equipamentoId}}\",\n  \"tipo\": \"CORRETIVA\",\n  \"valor\": 2200000.00,\n  \"dataInicio\": \"2026-01-30\",\n  \"cnpjEmpresa\": \"98.765.432/0001-10\",\n  \"nomeEmpresa\": \"Varian Oncology\",\n  \"descricao\": \"Troca de magnetron.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/operacional/manutencoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "operacional",
+                "manutencoes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resumo por IDs (Batch Summary)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "[\"{{equipamentoId}}\"]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/operacional/batch-summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "operacional",
+                "batch-summary"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Transparencia",
+      "item": [
+        {
+          "name": "Resumo Geral (KPIs)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/transparencia/sumario",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transparencia",
+                "sumario"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Painel Geral de Ativos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/transparencia/painel-geral",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transparencia",
+                "painel-geral"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Unidades (UBS/Hospitais)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/transparencia/unidades",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transparencia",
+                "unidades"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Todas Cidades",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/transparencia/cidades",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transparencia",
+                "cidades"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resumo por Cidade",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/transparencia/cidades/RECIFE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transparencia",
+                "cidades",
+                "RECIFE"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Dossiê de Auditoria por Patrimônio",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/transparencia/auditoria/{{tagPatrimonio}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transparencia",
+                "auditoria",
+                "{{tagPatrimonio}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api"
+    },
+    {
+      "key": "apiKey",
+      "value": "tri-olinda-key-456"
+    },
+    {
+      "key": "equipamentoId",
+      "value": ""
+    },
+    {
+      "key": "tagPatrimonio",
+      "value": "SUS-001"
+    }
+  ]
+}
