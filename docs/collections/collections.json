@@ -128,7 +128,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"status\": \"MANUTENCAO\"\n}"
+              "raw": "{\n  \"status\": \"MANUTENCAO_PREVENTIVA\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/equipamentos/{{equipamentoId}}/status",
